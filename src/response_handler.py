@@ -1,4 +1,5 @@
 from . import get_data, util
+import alive_progress
 
 
 class ResponseHandler:
@@ -17,14 +18,18 @@ class ResponseHandler:
         if multiple == "y":
             path = input("Path> ")
             self.data = []
-            for folder in util.scandir(path):
-                try:
-                    outcar = get_data.get_file(folder)
+            folders = util.scandir(path)
+            with alive_progress.alive_bar(len(folders)) as bar:
+                for folder in folders:
+                    try:
+                        outcar = get_data.get_file(folder)
 
-                except FileNotFoundError:
-                    continue
-                else:
-                    self.data.append(get_data.get_data(outcar))
+                    except FileNotFoundError:
+                        bar()
+                        continue
+                    else:
+                        self.data.append(get_data.get_data(outcar))
+                        bar()
         else:
             outcar = get_data.get_file(path)
 
