@@ -13,8 +13,7 @@ def find_file_like(directory:str, filename:str) -> list:
     return result
 
 def file_not_found(path:str) -> str:
-    print(f"{path} was not found, Please enter a different path")
-
+    raise FileNotFoundError(f"{path} was not found, Please enter a different path")
 def scandir(dirname):
     subfolders= [f.path for f in os.scandir(dirname) if f.is_dir()]
     for dirname in list(subfolders):
