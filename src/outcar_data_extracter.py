@@ -13,30 +13,41 @@ def find_file(file_name:str, folder:str) -> list:
 
 def get_data(folder:str) -> list:
     try:
+        # energy = None
         # OUTCAR FILE
         with open(fr"{folder}\OUTCAR", 'r') as outcar_file:
             outcar = outcar_file.readlines()
         index = 1
+        done_energy = False
+        done_forces = False
         for line in outcar[::-1]:
             index += 1
-            if line.strip() == "FREE ENERGIE OF THE ION-ELECTRON SYSTEM (eV)":
+            if "energy(sigma->0) =" in line.strip():      
+                # print(len(outcar) - index)
+        
                 break
         
-        # print(len(outcar) - index)
-
         energy = {}
         line_number = len(outcar) - index
 
-        # Energy Toten
-        line = outcar[line_number+3].split()
-        # print(line)
-        energy["toten"] = line[4]
+        # # Energy Toten
+        # line = outcar[line_number+3].split()
+        # # print(line)
+        # energy["toten"] = line[4]
 
-        # Energy without entropy & energy sigma->0
-        line = outcar[line_number+5].split()
+        # # Energy without entropy & energy sigma->0
+        line = outcar[line_number+1].split()
+        # print(line_number)
         # print(line)
-        energy["without_entropy"] = line[3]
-        energy["sigma_0"] = line[6]
+        # # print(line)
+        # energy["without_entropy"] = line[3]
+        try:
+            line.remove("=")
+            line.remove("=")
+        except: pass
+        # print(line)
+        energy["sigma_0"] = line[5]
+        # print(energy["sigma_0"])
 
         # print(energy)        
 
@@ -69,7 +80,7 @@ def get_data(folder:str) -> list:
             
     
     # return elements, energy["sigma_0"]
-    return {"elements":elements, "energy": energy, "file": folder}
+    return {"elements":elements, "energy": energy["sigma_0"], "file": folder}
 
 
 
@@ -86,16 +97,11 @@ def processe_data(folder:str, recursive=False):
 count_total = 0
 count = 0
 l = processe_data('./data/New_opt_p3x3', recursive=True)
-with open("./data/test_out.txt", 'w') as file:
-    for i in l:
-        file.write(str(i) + "\n")
-        count_total += 1
-        found = False
-        for j in i["elements"].values():
-            if "Pt" in j:
-                found = True
-        
-        if found:
-            count += 1
 
-print(f"Total: {count_total}\nFound: {count}\nPercentage: {count/count_total*100}")
+# json_data = json.loads(str(l).replace("'", '"'))
+
+with open("./data/test_out.json", 'w') as file:
+    file.write(json.dumps(l, indent=2))
+
+# p = get_data('./data/New_opt_p3x3\\Coverage_lat_int_OH_Pt_p3x3_copy\\Pt111_2xOH\\Pt111_2xOH_vasp')
+# print(p)
