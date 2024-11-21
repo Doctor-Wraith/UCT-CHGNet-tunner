@@ -66,24 +66,3 @@ def get_data(outcar:list[str]) -> dict:
         "energy": energy,
         "atoms": atoms
     }
-    
-
- 
-
-
-# ------------------------------------------------
-# TESTS
-# ------------------------------------------------
-# outcar_CO = get_file(r"D:\UCT Stuff\Projects\UCT\data\New_opt_p3x3\COgas")
-# data_CO = get_data(outcar_CO)
-# print(data_CO)
-
-# outcar_Pt100_1xO = get_file(r"D:\UCT Stuff\Projects\UCT\data\New_opt_p3x3\Pt100_1xO\OUTCAR")
-# data_Pt100_1xO = get_data(outcar_Pt100_1xO)
-# print(data_Pt100_1xO)
-
-# for folder in util.scandir("./data/New_opt_p3x3"):
-#     outcar = get_file(folder)
-#     if outcar is not None:
-#         data = get_data(outcar)
-#         print(data)
