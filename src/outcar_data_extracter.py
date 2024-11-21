@@ -56,7 +56,7 @@ def get_data(folder:str) -> list:
     
 
     # POSCAR FILES
-    elements = {}
+    elements = []
     poscar_file_names = find_file("POSCAR", folder)
     for poscar_file_name in poscar_file_names:
         # print(poscar_file)
@@ -64,18 +64,26 @@ def get_data(folder:str) -> list:
             with open(fr'{folder}\{poscar_file_name}', 'r') as poscar_file:
                 poscar = poscar_file.readlines()
             
-            if len(poscar_file_names) > 1:
+              # elements[poscar_file_name.replace('POSCAR_', '')] = ({k:j for k, j in zip(poscar[5].split(), poscar[6].split())})
+            elements += poscar[5].split()
 
-                # elements[poscar_file_name.replace('POSCAR_', '')] = ({k:j for k, j in zip(poscar[5].split(), poscar[6].split())})
-                elements[poscar_file_name.replace('POSCAR_', '')] = [k for k in poscar[5].split()]
-            else:
-                # elements["POSCAR"] = ({k:j for k, j in zip(poscar[5].split(), poscar[6].split())})
-                elements["POSCAR"] = [k for k in poscar[5].split()]
+
             
             # print(elements, "\n\n")
         
         except FileNotFoundError:
             raise Exception(f"Could not find file {folder}\\{poscar_file}")
+
+        else:
+            elements = list(dict.fromkeys(elements))
+
+    if "Pt" in elements:
+        elements.remove("Pt")
+
+        elements.insert(0, folder.split('\\')[::-1][0].split("_")[0])
+
+    
+    print(f"{elements}\n")
 
             
     
@@ -97,8 +105,6 @@ def processe_data(folder:str, recursive=False):
 count_total = 0
 count = 0
 l = processe_data('./data/New_opt_p3x3', recursive=True)
-
-# json_data = json.loads(str(l).replace("'", '"'))
 
 with open("./data/test_out.json", 'w') as file:
     file.write(json.dumps(l, indent=2))
