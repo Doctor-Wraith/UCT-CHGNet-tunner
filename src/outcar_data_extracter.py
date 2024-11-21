@@ -56,10 +56,10 @@ def get_data(folder:str) -> list:
             if len(poscar_file_names) > 1:
 
                 # elements[poscar_file_name.replace('POSCAR_', '')] = ({k:j for k, j in zip(poscar[5].split(), poscar[6].split())})
-                elements[poscar_file_name.replace('POSCAR_', '')] = {k for k in poscar[5].split()}
+                elements[poscar_file_name.replace('POSCAR_', '')] = [k for k in poscar[5].split()]
             else:
                 # elements["POSCAR"] = ({k:j for k, j in zip(poscar[5].split(), poscar[6].split())})
-                elements["POSCAR"] = {k for k in poscar[5].split()}
+                elements["POSCAR"] = [k for k in poscar[5].split()]
             
             # print(elements, "\n\n")
         
@@ -69,7 +69,7 @@ def get_data(folder:str) -> list:
             
     
     # return elements, energy["sigma_0"]
-    return {"elements":elements, "energy": energy}
+    return {"elements":elements, "energy": energy, "file": folder}
 
 
 
@@ -83,7 +83,19 @@ def processe_data(folder:str, recursive=False):
         
         return out
 
-
+count_total = 0
+count = 0
 l = processe_data('./data/New_opt_p3x3', recursive=True)
-with open("test_out", 'w') as file:
-    file.write(l)
+with open("./data/test_out.txt", 'w') as file:
+    for i in l:
+        file.write(str(i) + "\n")
+        count_total += 1
+        found = False
+        for j in i["elements"].values():
+            if "Pt" in j:
+                found = True
+        
+        if found:
+            count += 1
+
+print(f"Total: {count_total}\nFound: {count}\nPercentage: {count/count_total*100}")
