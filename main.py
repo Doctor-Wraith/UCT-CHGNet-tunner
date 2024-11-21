@@ -1,4 +1,4 @@
-import src.outcar_data_extracter as ode
+import data_extracter as ode
 import json
 
 def get_data_test():

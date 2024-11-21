@@ -2,7 +2,7 @@ import glob, os
 
 def find_file(file_name:str, folder:str) -> list:
     result = []
-    for root, dirs, files, in os.walk(folder):
+    for root_dir, folders, files, in os.walk(folder):
         for file in files:
             if file_name in file:
                 result.append(file)
@@ -19,22 +19,30 @@ def get_data(folder:str) -> dict:
         # OUTCAR FILE
         with open(fr"{folder}\OUTCAR", 'r') as outcar_file:
             outcar = outcar_file.readlines()
+
         index = 1
+
+        # Easier to read file from the bottom
         for line in outcar[::-1]:
             index += 1
             if "energy(sigma->0) =" in line.strip():              
                 break
         
-        energy = {}
-        line_number = len(outcar) - index
+        energy = None
+        line_number = len(outcar) - index + 1
 
+        # Get on of the energies
         # sigma->0
-        line = outcar[line_number+1].split()
+        
+        line = outcar[line_number].split()
+        
+        # Cleaing data
+        # consitancy of where the '=' appearses was not consisant
         try:
             line.remove("=")
             line.remove("=")
         except: pass
-        energy["sigma_0"] = line[5]     
+        energy = line[5]     
 
     except FileNotFoundError:
         raise Exception(f"There was no OUTCAR file found in {folder}")
@@ -54,6 +62,7 @@ def get_data(folder:str) -> dict:
             raise Exception(f"Could not find file {folder}\\{poscar_file}")
 
         else:
+            # Make sure elements are unique
             elements = list(dict.fromkeys(elements))
 
     # use the folder name to find which Pt is being used
@@ -62,7 +71,7 @@ def get_data(folder:str) -> dict:
 
         elements.insert(0, folder.split('\\')[::-1][0].split("_")[0])           
     
-    return {"elements":elements, "energy": energy["sigma_0"], "file": folder}
+    return {"elements":elements, "energy": energy, "file": folder}
 
 
 
