@@ -7,7 +7,7 @@ def main():
     while running:
         command = input("Enter command> ").lower()
 
-        if command in ["q", "quit", "close"]:
+        if command in ["q", "quit", "close", 'stop']:
             running = False
         else:
             handler.handler(command)

@@ -61,7 +61,6 @@ class ResponseHandler:
             print("Please load data")
 
     def save_local(self, *args):
-        print(args)
         if len(args) == 2:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:
