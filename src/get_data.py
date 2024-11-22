@@ -1,4 +1,7 @@
-from . import util
+try:
+    from . import util
+except ImportError:
+    import util
 
 
 class DataExtracter:
@@ -14,6 +17,7 @@ class DataExtracter:
         self.check_if_complete()
         self.get_energy()
         self.get_atoms()
+        self.check_for_pt()
         self.asign_positions_forces()
 
     def get_file(self)->None:
@@ -137,6 +141,14 @@ class DataExtracter:
             output_file.writelines(self.outcar)
         
         self.folder = f"{directory}\\{self.folder.split("\\")[-1]}"
+    
+    def check_for_pt(self):
+        if "Pt" in self.atoms.keys():
+            name = self.folder.replace("\\", "/").split("/")[-1].split("_")[0]
+            count = self.atoms["Pt"]
+            del self.atoms["Pt"]
+            self.atoms = {name:count} | self.atoms
+            print(self.atoms)
 
     def to_dict(self):
         atoms = {}
@@ -168,6 +180,11 @@ class DataExtracter:
 
 
 # # TEST
-# d = DataExtracter(r".\New_opt_p3x3\COgas")
-# # print(d.forces['C'][0])
-# print(d.__dict__())
+COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
+Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
+Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
+
+print(COgas.positions)
+print(Pt100_1xO.positions)
+print(Pt111_2XO.positions)
+
