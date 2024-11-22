@@ -3,6 +3,8 @@ try:
 except ImportError:
     import util
 
+import re
+
 
 class DataExtracter:
     def __init__(self, folder:str) -> None:
@@ -17,7 +19,7 @@ class DataExtracter:
         self.check_if_complete()
         self.get_energy()
         self.get_atoms()
-        self.check_for_pt()
+        self.check_for_surface()
         self.asign_positions_forces()
 
     def get_file(self)->None:
@@ -142,12 +144,23 @@ class DataExtracter:
         
         self.folder = f"{directory}\\{self.folder.split("\\")[-1]}"
     
-    def check_for_pt(self):
-        if "Pt" in self.atoms.keys():
-            name = self.folder.replace("\\", "/").split("/")[-1].split("_")[0]
-            count = self.atoms["Pt"]
-            del self.atoms["Pt"]
-            self.atoms = {name:count} | self.atoms
+    def check_for_surface(self):
+        # if "Pt" in self.atoms.keys():
+        #     name = self.folder.replace("\\", "/").split("/")[-1].split("_")[0]
+        #     count = self.atoms["Pt"]
+        #     del self.atoms["Pt"]
+        #     self.atoms = {name:count} | self.atoms
+
+        names = self.folder.replace("\\", "/").split("/")
+        print(self.atoms)
+        for name in names:
+            for i in name.split("_"):
+                element = "".join(re.findall('([a-zA-z])', i))
+                if element in self.atoms.keys():
+                    count = self.atoms[element]
+                    del self.atoms[element]
+                    self.atoms = {i:count} | self.atoms
+                    print(self.atoms)
 
     def to_dict(self):
         atoms = {}
@@ -198,11 +211,12 @@ class DataExtracter:
 
         return distances
 
-# # TEST
-COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
-Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
-Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
+# # # TEST
+# COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
+# Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
+# Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
+t = DataExtracter(r"E:\platinum\Pt111\Pt1113x3\3x3_O")
 
-print(COgas.calc_distance())
-print(Pt100_1xO.calc_distance())
-print(Pt111_2XO.calc_distance())
+# print(COgas.calc_distance())
+# print(Pt100_1xO.calc_distance())
+# print(Pt111_2XO.calc_distance())
