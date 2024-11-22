@@ -1,12 +1,12 @@
-class Vector:
-    
+
+class Vector2D:
     @property
     def x(self) -> float:
         return self._x
     
     @x.setter
     def x(self, value:float) -> None:
-        self._x = value
+        self._x = float(value)
     
     @property
     def y(self) -> float:
@@ -14,7 +14,31 @@ class Vector:
     
     @y.setter
     def y(self, value:float) -> None:
-        self._y = value
+        self._y = float(value)
+    
+    def __dict__(self) -> dict:
+        return {
+            'x': self.x,
+            'y': self.y,
+        }
+
+class Vector3D:
+    
+    @property
+    def x(self) -> float:
+        return self._x
+    
+    @x.setter
+    def x(self, value:float) -> None:
+        self._x = float(value)
+    
+    @property
+    def y(self) -> float:
+        return self._y
+    
+    @y.setter
+    def y(self, value:float) -> None:
+        self._y = float(value)
     
     @property
     def z(self) -> float:
@@ -22,7 +46,7 @@ class Vector:
 
     @z.setter
     def z(self, value:float):
-        self._z = value
+        self._z = float(value)
 
     def __dict__(self) -> dict:
         return {
@@ -31,10 +55,10 @@ class Vector:
             'z': self.z
         }
 
-class Position(Vector):
+class Position(Vector3D):
     def __str__(self) -> str:
         return f"Position:\n\tx: {self.x}\n\ty: {self.y}\n\tz: {self.z}"
 
-class Force(Vector):
+class Force(Vector3D):
     def __str__(self) -> str:
         return f"Forces:\n\tx: {self.x}\n\ty: {self.y}\n\tz: {self.z}"

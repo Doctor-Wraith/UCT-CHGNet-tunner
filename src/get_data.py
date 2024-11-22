@@ -148,7 +148,6 @@ class DataExtracter:
             count = self.atoms["Pt"]
             del self.atoms["Pt"]
             self.atoms = {name:count} | self.atoms
-            print(self.atoms)
 
     def to_dict(self):
         atoms = {}
@@ -179,12 +178,31 @@ class DataExtracter:
         return out
 
 
+    def calc_distance(self):
+        positions = []
+        out = []
+        for i in self.positions.items():
+            for j in i[1]:
+                positions.append([i[0],j])
+        
+        n = len(positions)
+        for i in range(n-1):
+            for j in range(i+1, n):
+                out.append([positions[i], positions[j]])
+        
+        distances = {}
+
+        for k in out:
+            atom_1, atom_2 = k
+            distances[f"{atom_1[0]}_{atom_2[0]}"] = util.distance.distance(atom_1[1], atom_2[1])
+
+        return distances
+
 # # TEST
 COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
 Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
 Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
 
-print(COgas.positions)
-print(Pt100_1xO.positions)
-print(Pt111_2XO.positions)
-
+print(COgas.calc_distance())
+print(Pt100_1xO.calc_distance())
+print(Pt111_2XO.calc_distance())
