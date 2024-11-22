@@ -5,17 +5,20 @@ import json
 
 
 class ResponseHandler:
-    LOAD_DATA = ["load"]
-    SAVE = ["save"]
+    LOAD_DATA = ["load", "--l"]
+    SAVE = ["out", "--o"]
+    SAVE_LOCAL = ["save", '--s']
     def __init__(self) -> None:
         self.data = []
 
-    def handler(self, command:str):
+    def handler(self, command:str, *args):
         
         if command in self.LOAD_DATA:
             self.load_data()
         elif command in self.SAVE:
             self.save('json')
+        elif command in self.SAVE_LOCAL:
+            self.save_local(args)
     
     def load_data(self):
         multiple = input("Recursively Search directory [Y/n]> ").lower()
@@ -27,27 +30,47 @@ class ResponseHandler:
             with alive_progress.alive_bar(len(folders)) as bar:
                 for folder in folders:
                     try:
-                        outcar = get_data.get_file(folder)
+                        print(folder)
+                        outcar = get_data.DataExtracter(folder)
 
                     except FileNotFoundError:
                         bar()
                         continue
+                    except util.exceptions.NotCompleteOUTCAR:
+                        bar()
+                        continue
                     else:
-                        self.data.append(get_data.get_data(outcar))
+                        self.data.append(outcar)
                         bar()
         else:
-            outcar = get_data.get_file(path)
+            path = input("Path> ")
+            outcar = get_data.DataExtracter(path)
+            self.data = [outcar]
 
-            if outcar is not None:
-                self.data = [get_data.get_data(outcar)]
-        print(self.data) 
 
     def save(self, type:Literal["json"]):
         if self.data is not None:
+
+            data = [d.to_dict() for d in self.data]
             
             if type == "json":
                 with open("./data/out.json", 'w') as json_file:
-                    json_file.write(json.dumps(self.data, indent=3))
+                    json_file.write(json.dumps(data, indent=3))
 
         else:
             print("Please load data")
+
+    def save_local(self, *args):
+        print(args)
+        if len(args) == 2:
+            with alive_progress.alive_bar(len(self.data)) as bar:
+                for data in self.data:
+                    data.save_outcar_file(args)
+                    bar()
+        elif len(args) == 1:
+            with alive_progress.alive_bar(len(self.data)) as bar:
+                for data in self.data:
+                    data.save_outcar_file()
+                    bar()
+        else:
+            raise Exception("To many Args")

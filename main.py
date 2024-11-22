@@ -12,4 +12,5 @@ def main():
         else:
             handler.handler(command)
 
-if __name__ == "__main__": main()
+if __name__ == "__main__": 
+    main()
