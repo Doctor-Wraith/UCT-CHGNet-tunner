@@ -14,6 +14,7 @@ class DataExtracter:
         self.atoms = None
         self.positions = None
         self.forces = None
+        self.surface = None
 
         self.get_file()
         self.check_if_complete()
@@ -164,6 +165,7 @@ class DataExtracter:
                     count = self.atoms[element]
                     del self.atoms[element]
                     self.atoms = {i:count} | self.atoms
+                    self.surface = i
 
     def to_dict(self):
         atoms = {}
@@ -215,13 +217,6 @@ class DataExtracter:
         return distances
 
 # # # TEST
-# COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
-# Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
-# Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
-t = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Coverage_lat_int_OH_Pt_p3x3_copy\Pt100_1xOH")
+t = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
 print(t.atoms)
-print(util.sort_dict(t.atoms))
-
-# print(COgas.calc_distance())
-# print(Pt100_1xO.calc_distance())
-# print(Pt111_2XO.calc_distance())
+print(t.surface)
