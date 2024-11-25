@@ -16,7 +16,7 @@ class ResponseHandler:
         if command in self.LOAD_DATA:
             self.load_data()
         elif command in self.SAVE:
-            self.save('json')
+            self.save()
         elif command in self.SAVE_LOCAL:
             self.save_local(args)
     
@@ -48,14 +48,13 @@ class ResponseHandler:
             self.data = [outcar]
 
 
-    def save(self, type:Literal["json"]):
+    def save(self):
         if self.data is not None:
-
-            data = [d.to_dict() for d in self.data]
+            with alive_progress.alive_bar(len(self.data)) as bar:
+                for data in self.data:
+                    get_data.prep_data(data)
+                    bar()
             
-            if type == "json":
-                with open("./data/out.json", 'w') as json_file:
-                    json_file.write(json.dumps(data, indent=3))
 
         else:
             print("Please load data")

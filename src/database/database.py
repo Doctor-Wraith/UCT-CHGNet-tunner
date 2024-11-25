@@ -15,7 +15,6 @@ class SqliteDataBase:
         cursor = self.connection.cursor()
 
         for name, statement in sqlstatements.CREATE_TABLE.items():
-            print(name)
             cursor.execute(statement)
     
     # region ################# INSERTS #################

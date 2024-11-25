@@ -296,6 +296,7 @@ def prep_data(data: DataExtracter) -> dict:
         force.tunning = tune
 
     # Add to db
+    db.add_atom(surface)
     for atom in atoms.values():
         db.add_atom(atom)
     
