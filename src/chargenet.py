@@ -80,6 +80,7 @@ with alive_progress.alive_bar(len(datasets)) as bar:
     for dataset, train_loader, val_loader, test_loader in datasets:
         trainer.train(train_loader, val_loader, test_loader)
         bar()
+        break
 
 print("\n\n")
 
