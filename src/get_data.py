@@ -66,11 +66,16 @@ class DataExtracter:
 
         number_of_atoms = line.split()[4::]
 
+
+        atoms = []
         for line in self.outcar:
-            if "POSCAR:" in line.strip():
-                break
-        
-        atoms = line.split()[1::]  
+            if "PAW_PBE" in line.strip():
+                atom = line.split()[2]
+
+                if atom not in atoms:
+                    atoms.append(atom)
+                else:
+                    break
         
         self.atoms = {a:int(n) for a,n in zip(atoms, number_of_atoms)}
     
@@ -152,7 +157,6 @@ class DataExtracter:
         #     self.atoms = {name:count} | self.atoms
 
         names = self.folder.replace("\\", "/").split("/")
-        print(self.atoms)
         for name in names:
             for i in name.split("_"):
                 element = "".join(re.findall('([a-zA-z])', i))
@@ -160,7 +164,6 @@ class DataExtracter:
                     count = self.atoms[element]
                     del self.atoms[element]
                     self.atoms = {i:count} | self.atoms
-                    print(self.atoms)
 
     def to_dict(self):
         atoms = {}
@@ -215,7 +218,9 @@ class DataExtracter:
 # COgas = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
 # Pt100_1xO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt100_1xO")
 # Pt111_2XO = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Pt111_2xO")
-t = DataExtracter(r"E:\platinum\Pt111\Pt1113x3\3x3_O")
+t = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\Coverage_lat_int_OH_Pt_p3x3_copy\Pt100_1xOH")
+print(t.atoms)
+print(util.sort_dict(t.atoms))
 
 # print(COgas.calc_distance())
 # print(Pt100_1xO.calc_distance())
