@@ -1,10 +1,12 @@
 try:
     from . import util
+    from .database import data_classes, db
 except ImportError:
     import util
+    from database import data_classes, db
 
 from typing import Literal
-import re
+import re, uuid, random
 
 
 class DataExtracter:
@@ -185,11 +187,11 @@ class DataExtracter:
             
             posses = []
             for pos in positions:
-                posses.append([pos.x, pos.y, pos.z])
+                posses = [pos.x, pos.y, pos.z]
             
             forces_2 = []
             for force in forces:
-                forces_2.append([force.x, force.y, force.z])
+                forces_2 = [force.x, force.y, force.z]
             
             atoms[atom] = {
                 "positions": posses,
@@ -226,5 +228,82 @@ class DataExtracter:
 
         return distances
 
-# # # TEST
-t = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
+def prep_data(data: DataExtracter) -> dict:
+    def get_adsorbates(atoms: dict[str, data_classes.Atom]) -> list[data_classes.Atom|None]:
+        atoms = list(atoms.values())
+        try:
+            adsorbate_1 = atoms[0]
+        except:
+            adsorbate_1 = None
+        try:
+            adsorbate_2 = atoms[1]
+        except:
+            adsorbate_2 = None
+        try:
+            adsorbate_3 = atoms[2]
+        except:
+            adsorbate_3 = None
+
+        return adsorbate_1, adsorbate_2, adsorbate_3
+
+    data_dict = data.to_dict()
+
+
+    dict_atoms = data_dict.get("atoms")
+    atoms = {}
+    positions: list[data_classes.Position] = []
+    forces: list[data_classes.Force] = []
+
+    for atom in dict_atoms.keys():
+        atom_id = db.search_atom_id(atom)
+        atom_uid =  atom_id[0] if atom_id is not None else uuid.uuid4().hex 
+        a = data_classes.Atom(atom_uid, atom)
+        atoms[atom] = a
+
+        pos = data_classes.Position(uuid.uuid4().hex, a, None, data.position_type, 
+                                    data_dict["atoms"][atom]["positions"][0],
+                                    data_dict["atoms"][atom]["positions"][1],
+                                    data_dict["atoms"][atom]["positions"][2])
+        positions.append(pos)
+
+        force = data_classes.Force(uuid.uuid4().hex, a, None, 
+                                   data_dict["atoms"][atom]["forces"][0],
+                                   data_dict["atoms"][atom]["forces"][1],
+                                   data_dict["atoms"][atom]["forces"][2])
+        forces.append(force)
+
+    print(atoms)
+    # print(positions)
+    # print(forces)
+
+    surface:data_classes.Atom = atoms.get(data.surface, None)
+
+    try:
+        del atoms[surface.atom_name]
+    except AttributeError:
+        pass
+
+    adsorbate_1, adsorbate_2, adsorbate_3 = get_adsorbates(atoms)
+    
+    tune = data_classes.Tunning(uuid.uuid4().hex, surface, 
+                                adsorbate_1, adsorbate_2, adsorbate_3,
+                                data.energy, data.folder, random.choices([True, False], [80, 20])[0])
+    
+    for pos in positions:
+        pos.tunning = tune
+    
+    for force in forces:
+        force.tunning = tune
+
+    # Add to db
+    for atom in atoms.values():
+        db.add_atom(atom)
+    
+
+    for pos in positions:
+        db.add_position(pos)
+    
+    for force in forces:
+        db.add_force(force)
+        
+    db.add_tuning(tune)
