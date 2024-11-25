@@ -3,6 +3,7 @@ try:
 except ImportError:
     import util
 
+from typing import Literal
 import re
 
 
@@ -15,12 +16,14 @@ class DataExtracter:
         self.positions = None
         self.forces = None
         self.surface = None
+        self.position_type: Literal["cartesian", "direct"]
 
         self.get_file()
         self.check_if_complete()
         self.get_energy()
         self.get_atoms()
         self.check_for_surface()
+        self.set_position_type()
         self.asign_positions_forces()
 
     def get_file(self)->None:
@@ -124,6 +127,13 @@ class DataExtracter:
             return positions, forces
                 
 
+    def set_position_type(self):
+        for line in self.outcar:
+            if "positions in" in line:
+                break
+
+        line = line.split()
+        self.position_type = line[3]
 
     def asign_positions_forces(self):
         atoms = []
@@ -218,5 +228,3 @@ class DataExtracter:
 
 # # # TEST
 t = DataExtracter(r"D:\UCT Stuff\Projects\UCT\New_opt_p3x3\COgas")
-print(t.atoms)
-print(t.surface)
