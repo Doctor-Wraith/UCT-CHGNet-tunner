@@ -12,9 +12,9 @@ class Atom:
 class Tunning:
     tunning_id: str
     surface: Atom
-    adsorbate_1: Atom|None
-    adsorbate_2: Atom|None
-    adsorbate_3: Atom|None
+    adsorbate_1: Atom | None
+    adsorbate_2: Atom | None
+    adsorbate_3: Atom | None
     Energy: float
     outcar_path: str
     training: bool

@@ -1,6 +1,7 @@
 from src.response_handler import ResponseHandler
 from pathlib import Path
 
+
 def main():
     Path("./data/").mkdir(parents=True, exist_ok=True)
     running = True
@@ -13,5 +14,6 @@ def main():
         else:
             handler.handler(command)
 
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     main()

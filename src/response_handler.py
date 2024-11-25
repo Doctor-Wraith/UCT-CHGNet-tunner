@@ -1,23 +1,21 @@
 from . import get_data, util
 import alive_progress
-from typing import Literal
-import json
-import os, shutil
 
 
 class ResponseHandler:
     LOAD_DATA = ["load", "--l"]
     SAVE_LOCAL = ["save", '--s']
+
     def __init__(self) -> None:
         self.data = []
 
-    def handler(self, command:str, *args):
-        
+    def handler(self, command: str, *args):
+
         if command in self.LOAD_DATA:
             self.load_data()
         elif command in self.SAVE_LOCAL:
             self.save_local()
-    
+
     def load_data(self):
         multiple = input("Recursively Search directory [Y/n]> ").lower()
 
@@ -45,18 +43,17 @@ class ResponseHandler:
             outcar = get_data.DataExtracter(path)
             self.data = [outcar]
 
-
     def save(self):
         if self.data is not None:
             for data in self.data:
                 get_data.prep_data(data)
-            
+
         else:
             print("Please load data")
 
     def save_local(self):
         local_save = input("Save local [Y/n]> ").strip().lower()
-        
+
         if local_save == "y":
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:

@@ -35,7 +35,7 @@ CREATE_TABLE = {
         FOREIGN KEY(tuning_id)  REFERENCES tuning(tuning_id)
         )
         """,
-    "force":"""
+    "force": """
         CREATE TABLE IF NOT EXISTS force (
         force_id        TEXT    NOT NULL    PRIMARY KEY,
         atom_id         TEXT    NOT NULL,
@@ -56,7 +56,7 @@ ADD_ITEMS = {
     "tune": """
         INSERT INTO tuning VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """,
-    "position":"""
+    "position": """
         INSERT INTO posistion VALUES (?, ?, ?, ?, ?, ?, ?)
     """,
     "force": """
@@ -65,11 +65,13 @@ ADD_ITEMS = {
 }
 
 SEARCH_IDS = {
-    "atom":"""
+    "atom": """
         SELECT atom_id FROM atom where atom_name = ?
     """
 }
 
 SEARCH_OUTCAR_PATH = """SELECT tuning_id FROM tuning WHERE outcar_path = ?"""
 
-SEARCH_OUTCAR_TRAIN_PATH = """SELECT outcar_path from tuning WHERE training = ?"""
+SEARCH_OUTCAR_TRAIN_PATH = """
+        SELECT outcar_path from tuning WHERE training = ?
+"""
