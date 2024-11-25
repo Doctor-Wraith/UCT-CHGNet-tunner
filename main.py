@@ -1,5 +1,8 @@
 from src.response_handler import ResponseHandler
+from pathlib import Path
+
 def main():
+    Path("./data/").mkdir(parents=True, exist_ok=True)
     running = True
     handler = ResponseHandler()
     while running:
