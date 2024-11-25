@@ -7,6 +7,8 @@ except ImportError:
 
 from typing import Literal
 import re, uuid, random
+import os, shutil
+from pathlib import Path
 
 
 class DataExtracter:
@@ -157,10 +159,20 @@ class DataExtracter:
         self.positions = atom_positions
     
     def save_outcar_file(self, directory="./data/OUTCAR"):
-        with open(f"{directory}\\{self.folder.split("\\")[-1]}", 'w') as output_file:
-            output_file.writelines(self.outcar)
+        def copytree(src, dst, symlinks=False, ignore=None):
+            Path(dst).mkdir(parents=True, exist_ok=True)
+            for item in os.listdir(src):
+                s = os.path.join(src, item)
+                d = os.path.join(dst, item)
+                if os.path.isdir(s):
+                    shutil.copytree(s, d, symlinks, ignore)
+                else:
+                    shutil.copy2(s, d)
         
-        self.folder = f"{directory}\\{self.folder.split("\\")[-1]}"
+        name = self.folder.replace("\\", "/").split("/")[-1]
+        copytree(self.folder.replace("\\OUTCAR", ""), directory + "\\" + name)
+        
+        # self.folder = f"{directory}\\{self.folder.split("\\")[-1]}"
     
     def check_for_surface(self):
         # if "Pt" in self.atoms.keys():
@@ -228,7 +240,7 @@ class DataExtracter:
 
         return distances
 
-def prep_data(data: DataExtracter) -> dict:
+def prep_data(data: DataExtracter):
     def get_adsorbates(atoms: dict[str, data_classes.Atom]) -> list[data_classes.Atom|None]:
         atoms = list(atoms.values())
         try:
@@ -246,8 +258,14 @@ def prep_data(data: DataExtracter) -> dict:
 
         return adsorbate_1, adsorbate_2, adsorbate_3
 
-    data_dict = data.to_dict()
+    def check_if_in_database(path:str):
+        r = db.search_outcar_file(path)
+        return True if r != [] else False
+    
+    if check_if_in_database(data.folder):
+        return
 
+    data_dict = data.to_dict()
 
     dict_atoms = data_dict.get("atoms")
     atoms = {}
@@ -271,10 +289,6 @@ def prep_data(data: DataExtracter) -> dict:
                                    data_dict["atoms"][atom]["forces"][1],
                                    data_dict["atoms"][atom]["forces"][2])
         forces.append(force)
-
-    print(atoms)
-    # print(positions)
-    # print(forces)
 
     surface:data_classes.Atom = atoms.get(data.surface, None)
 

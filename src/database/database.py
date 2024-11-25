@@ -100,6 +100,16 @@ class SqliteDataBase:
 
         return result
 
+    def search_outcar_file(self, path:str) -> str:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_OUTCAR_PATH, (path,))
+
+        reslut = cursor.fetchall()
+
+        return reslut
+    
+    # endregion
+
 
 db = SqliteDataBase()
 db.create_tables()

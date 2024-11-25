@@ -2,11 +2,11 @@ from . import get_data, util
 import alive_progress
 from typing import Literal
 import json
+import os, shutil
 
 
 class ResponseHandler:
     LOAD_DATA = ["load", "--l"]
-    SAVE = ["out", "--o"]
     SAVE_LOCAL = ["save", '--s']
     def __init__(self) -> None:
         self.data = []
@@ -15,8 +15,6 @@ class ResponseHandler:
         
         if command in self.LOAD_DATA:
             self.load_data()
-        elif command in self.SAVE:
-            self.save()
         elif command in self.SAVE_LOCAL:
             self.save_local(args)
     
@@ -50,12 +48,9 @@ class ResponseHandler:
 
     def save(self):
         if self.data is not None:
-            with alive_progress.alive_bar(len(self.data)) as bar:
-                for data in self.data:
-                    get_data.prep_data(data)
-                    bar()
+            for data in self.data:
+                get_data.prep_data(data)
             
-
         else:
             print("Please load data")
 
@@ -64,11 +59,13 @@ class ResponseHandler:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:
                     data.save_outcar_file(args)
+                    self.save()
                     bar()
         elif len(args) == 1:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:
                     data.save_outcar_file()
+                    self.save()
                     bar()
         else:
             raise Exception("To many Args")

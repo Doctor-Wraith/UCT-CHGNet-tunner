@@ -69,3 +69,5 @@ SEARCH_IDS = {
         SELECT atom_id FROM atom where atom_name = ?
     """
 }
+
+SEARCH_OUTCAR_PATH = """SELECT tuning_id FROM tuning WHERE outcar_path = ?"""
