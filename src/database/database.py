@@ -104,10 +104,18 @@ class SqliteDataBase:
         cursor = self.connection.cursor()
         cursor.execute(sqlstatements.SEARCH_OUTCAR_PATH, (path,))
 
-        reslut = cursor.fetchall()
+        result = cursor.fetchall()
 
-        return reslut
+        return result
     
+    def search_outcar_file_train(self, training:bool=True):
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_OUTCAR_TRAIN_PATH, (training,))
+
+        result = cursor.fetchall()
+
+        return result
+
     # endregion
 
 

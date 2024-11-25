@@ -16,7 +16,7 @@ class ResponseHandler:
         if command in self.LOAD_DATA:
             self.load_data()
         elif command in self.SAVE_LOCAL:
-            self.save_local(args)
+            self.save_local()
     
     def load_data(self):
         multiple = input("Recursively Search directory [Y/n]> ").lower()
@@ -54,18 +54,17 @@ class ResponseHandler:
         else:
             print("Please load data")
 
-    def save_local(self, *args):
-        if len(args) == 2:
-            with alive_progress.alive_bar(len(self.data)) as bar:
-                for data in self.data:
-                    data.save_outcar_file(args)
-                    self.save()
-                    bar()
-        elif len(args) == 1:
+    def save_local(self):
+        local_save = input("Save local [Y/n]> ").strip().lower()
+        
+        if local_save == "y":
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:
                     data.save_outcar_file()
                     self.save()
                     bar()
         else:
-            raise Exception("To many Args")
+            with alive_progress.alive_bar(len(self.data)) as bar:
+                for data in self.data:
+                    self.save()
+                    bar()

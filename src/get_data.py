@@ -137,7 +137,8 @@ class DataExtracter:
                 break
 
         line = line.split()
-        self.position_type = line[3]
+        print(line)
+        self.position_type = line[2]
 
     def asign_positions_forces(self):
         atoms = []

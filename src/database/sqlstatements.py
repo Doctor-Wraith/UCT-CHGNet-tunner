@@ -15,7 +15,7 @@ CREATE_TABLE = {
         adsorbate_3_id  TEXT,
         energy          REAL        NOT NULL,
         outcar_path     TEXT        NOT NULL,
-        tunning         BOOLEAN     NOT NULL,
+        training         BOOLEAN     NOT NULL,
         FOREIGN KEY(surface_id)     REFERENCES atom(atom_id),
         FOREIGN KEY(adsorbate_1_id) REFERENCES atom(atom_id),
         FOREIGN KEY(adsorbate_2_id) REFERENCES atom(atom_id),
@@ -71,3 +71,5 @@ SEARCH_IDS = {
 }
 
 SEARCH_OUTCAR_PATH = """SELECT tuning_id FROM tuning WHERE outcar_path = ?"""
+
+SEARCH_OUTCAR_TRAIN_PATH = """SELECT outcar_path from tuning WHERE training = ?"""
