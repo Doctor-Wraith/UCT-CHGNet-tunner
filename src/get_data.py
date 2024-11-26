@@ -242,15 +242,15 @@ def prep_data(data: DataExtracter):
         atoms = list(atoms.values())
         try:
             adsorbate_1 = atoms[0]
-        except TypeError:
+        except (TypeError, IndexError):
             adsorbate_1 = None
         try:
             adsorbate_2 = atoms[1]
-        except TypeError:
+        except (TypeError, IndexError):
             adsorbate_2 = None
         try:
             adsorbate_3 = atoms[2]
-        except TypeError:
+        except (TypeError, IndexError):
             adsorbate_3 = None
 
         return adsorbate_1, adsorbate_2, adsorbate_3
