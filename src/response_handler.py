@@ -57,8 +57,12 @@ class ResponseHandler:
         if local_save == "y":
             with alive_progress.alive_bar(len(self.data)) as bar:
                 for data in self.data:
-                    data.save_outcar_file()
-                    self.save()
+                    try:
+                        data.save_outcar_file()
+                    except Exception:
+                        pass
+                    else:
+                        self.save()
                     bar()
         else:
             with alive_progress.alive_bar(len(self.data)) as bar:
