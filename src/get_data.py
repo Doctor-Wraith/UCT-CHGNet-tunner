@@ -46,7 +46,7 @@ class DataExtracter:
         try:
             with open(self.folder, "r") as outcar_file:
                 self.outcar = outcar_file.readlines()
-        except PermissionError:
+        except (PermissionError, IsADirectoryError):
             try:
                 with open(f"{self.folder}\\OUTCAR", 'r') as outcar_file:
                     self.outcar = outcar_file.readlines()
