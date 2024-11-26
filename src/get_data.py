@@ -170,9 +170,8 @@ class DataExtracter:
                     shutil.copy2(s, d)
 
         name = self.folder.replace("\\", "/").split("/")[-1]
-        copytree(self.folder.replace("\\OUTCAR", ""), directory + "\\" + name)
+        copytree(self.folder.replace("/OUTCAR", ""), directory + "/" + name)
 
-        # self.folder = f"{directory}\\{self.folder.split("\\")[-1]}"
 
     def check_for_surface(self):
 
