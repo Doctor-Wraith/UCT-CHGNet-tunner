@@ -9,9 +9,9 @@ from pathlib import Path
 
 
 class SqliteDataBase:
-    def __init__(self, connection_string="./data/db.db") -> None:
+    def __init__(self, connection_string="./data/") -> None:
         Path(connection_string).mkdir(parents=True, exist_ok=True)
-        self.connection = sqlite3.connect(connection_string)
+        self.connection = sqlite3.connect(connection_string + "db.db")
 
     def create_tables(self):
         cursor = self.connection.cursor()
