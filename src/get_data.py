@@ -48,11 +48,11 @@ class DataExtracter:
                 self.outcar = outcar_file.readlines()
         except (PermissionError, IsADirectoryError):
             try:
-                with open(f"{self.folder}\\OUTCAR", 'r') as outcar_file:
+                with open(f"{self.folder}/OUTCAR", 'r') as outcar_file:
                     self.outcar = outcar_file.readlines()
             except FileNotFoundError:
                 self.outcar = None
-                util.file_not_found(f"{self.folder}\\OUTCAR")
+                util.file_not_found(f"{self.folder}/OUTCAR")
 
         except FileNotFoundError:
             self.outcar = None
