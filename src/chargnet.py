@@ -48,13 +48,12 @@ class CHGNET:
             "magmom") != [] else None
 
     def load_model(self):
-        self.chgnet = CHGNet.load()
-        # self.chgnet = CHGNet.from_file(
-        #     r"D:\UCT Stuff\Projects\UCT\11-26-2024\bestF_epoch2_e0_f0_s0_mNA.pth.tar") # noqa
-        print(glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024/epoch*"))
-        self.chgnet = CHGNet.from_file(
-           glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024\epoch*")[0]
-        )
+        try:
+            self.chgnet = CHGNet.from_file(
+                glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024\epoch*")[0]
+            )
+        except Exception:
+            self.chgnet = CHGNet.load()
 
     def predict(self):
         struct = random.choice(self.structures)
