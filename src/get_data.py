@@ -172,7 +172,6 @@ class DataExtracter:
         name = self.folder.replace("\\", "/").split("/")[-1]
         copytree(self.folder.replace("/OUTCAR", ""), directory + "/" + name)
 
-
     def check_for_surface(self):
 
         names = self.folder.replace("\\", "/").split("/")
