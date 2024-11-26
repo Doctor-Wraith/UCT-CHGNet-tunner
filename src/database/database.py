@@ -5,10 +5,12 @@ try:
 except ImportError:
     import sqlstatements
     import data_classes
+from pathlib import Path
 
 
 class SqliteDataBase:
     def __init__(self, connection_string="./data/db.db") -> None:
+        Path(connection_string).mkdir(parents=True, exist_ok=True)
         self.connection = sqlite3.connect(connection_string)
 
     def create_tables(self):
