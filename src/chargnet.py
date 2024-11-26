@@ -9,13 +9,13 @@ from chgnet.trainer import Trainer
 import numpy as np
 from pymatgen.core import Structure
 from pathlib import Path
-import glob
+import glob # noqa
 try:
     from database import db
 except ImportError:
     from .database import db # noqa
 import random
-import alive_progress
+import alive_progress # noqa
 
 # endregion
 
@@ -49,8 +49,12 @@ class CHGNET:
 
     def load_model(self):
         self.chgnet = CHGNet.load()
-        # Alternatively you can read your own model
-        # chgnet = CHGNet.from_file(model_path)
+        # self.chgnet = CHGNet.from_file(
+        #     r"D:\UCT Stuff\Projects\UCT\11-26-2024\bestF_epoch2_e0_f0_s0_mNA.pth.tar") # noqa
+        print(glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024/epoch*"))
+        self.chgnet = CHGNet.from_file(
+           glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024\epoch*")[0]
+        )
 
     def predict(self):
         struct = random.choice(self.structures)
@@ -93,8 +97,8 @@ class CHGNET:
         ]:
             for param in layer.parameters():
                 param.requires_grad = False
-        
-        trainer = Trainer(
+
+        self.trainer = Trainer(
             model=self.chgnet,
             targets="efs",
             optimizer="Adam",
@@ -106,7 +110,7 @@ class CHGNET:
             print_freq=6
         )
 
-        trainer.train(train_loader, val_loader, test_loader)
+        self.trainer.train(train_loader, val_loader, test_loader)
 
     # region Properties
     @property
@@ -141,4 +145,4 @@ with alive_progress.alive_bar(len(
         chargnet.train()
         bar()
 
-# chargnet.predict()
+chargnet.predict()
