@@ -50,12 +50,13 @@ class CHGNET:
     def load_model(self):
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024\epoch*")[0]
+                glob.glob(r"D:\UCT Stuff\Projects\UCT\11-27-2024\epoch*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
 
     def predict(self):
+        self.load_model()
         struct = random.choice(self.structures)
         prediction = self.chgnet.predict_structure(struct)
         for key, unit in [
@@ -135,13 +136,22 @@ chargnet.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-with alive_progress.alive_bar(len(
-        glob.glob(chargnet.data_folder + "/json/*.json"))) as bar:
+# index = 0
+# with alive_progress.alive_bar(len(
+#         glob.glob(chargnet.data_folder + "/json/*.json"))) as bar:
+#     for file in glob.glob(chargnet.data_folder + "/json/*.json")[25:]:
+#         print(f"\n\n{file}\n")
+#         chargnet.load_structures(file)
+#         chargnet.train()
+#         index += 1
 
-    for file in glob.glob(chargnet.data_folder + "/json/*.json"):
-        print(f"\n\n{file}\n")
-        chargnet.load_structures(file)
-        chargnet.train()
-        bar()
+#         if index == 35:
+#             break
+
+#         bar()
+
+print(glob.glob(chargnet.data_folder + "/json/*.json")[60])
+chargnet.load_structures(glob.glob(chargnet.data_folder +
+                                   "/json/*.json")[60])
 
 chargnet.predict()
