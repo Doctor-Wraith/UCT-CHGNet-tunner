@@ -317,3 +317,136 @@ def prep_data(data: DataExtracter):
         db.add_force(force)
 
     db.add_tuning(tune)
+
+
+class Data:
+    def __init__(self) -> None:
+        self.outcar = None
+        self.energy = None
+        self.atoms: list[util.Atom] = None
+
+    def set_energy(self):
+        if self.outcar is None:
+            raise FileNotFoundError("Please load the file path")
+
+        for line in self.outcar[::-1]:
+            if "energy(sigma->0)" in line.strip():
+                list_line = line.replace("=", '').split()
+                self.energy = list_line[5]
+                break
+
+    def set_atoms(self):
+        for line in self.outcar:
+            if "ions per type =" in line.strip():
+                number_atoms = line.split()[4::]
+                break
+
+        atoms = []
+        for line in self.outcar:
+            if "PAW_PBE" in line.strip():
+                atom = line.split()[2]
+
+                if atom not in atoms:
+                    atoms.append(atom)
+                else:
+                    break
+
+        self.atoms = []
+        for atom, number in zip(atoms, number_atoms):
+            self.atoms.append(util.Atom(atom, number, None, None))
+
+    def check_if_complete(self, folder):
+        found = False
+
+        for line in self.outcar[::-1]:
+            if "aborting loop because EDIFF is reached" in line:
+                found = True
+                break
+
+        if not found:
+            raise ValueError("File incomplete")
+
+    def get_position_type(self) -> str:
+        for line in self.outcar:
+            if "positions in" in line:
+                line = line.split()
+                return line[2]
+
+    def get_positions_forces(self) -> tuple:
+        for index, line in enumerate(self.outcar[::-1]):
+            if "POSITION" in line:
+                break
+
+        line_number = len(self.outcar) - index
+        lines = []
+        forces = []
+        positions = []
+
+        while "---" not in line:
+            line_number += 1
+            line = self.outcar[line_number]
+            lines.append(line.split())
+        
+        lines.pop(len(lines) - 1)
+
+        for line in lines:
+            pos = util.Position()
+            pos.x = line[0]
+            pos.y = line[1]
+            pos.z = line[2]
+            pos.position_type = self.get_position_type()
+
+            force = util.Force()
+            force.x = line[3]
+            force.y = line[4]
+            force.z = line[5]
+
+            positions.append(pos)
+            forces.append(force)
+
+        return positions, forces
+
+    def set_positions_forces(self):
+        atoms = []
+        atom_forces = {x.name: [] for x in self.atoms}
+        atoms_pos = {x.name: [] for x in self.atoms}
+        for atom in self.atoms:
+            for i in range(atom.count):
+                atoms.append(atom.name)
+
+        for index, pos_force in enumerate(zip(self.get_positions_forces())):
+            pos = pos_force[0]
+            force = pos_force[1]
+
+            atom_forces[atoms[index]].append(force)
+            atoms_pos[atoms[index]].append(pos)
+
+        for atom in self.atoms:
+            atom.forces = atom_forces[atom.name]
+            atom.locations = atoms_pos[atom.name]
+
+    # region Proprities
+    @property
+    def folder(self) -> str:
+        return self._folder
+
+    @folder.setter
+    def folder(self, value: str):
+        try:
+            with open(value, 'r') as outcar_file:
+                self.outcar = outcar_file.readlines()
+        except (PermissionError, IsADirectoryError):
+            try:
+                with open(f"{value}/OUTCAR", 'r') as outcar_file:
+                    self.outcar = outcar_file.readlines()
+            except FileNotFoundError:
+                self.outcar = None
+                raise FileNotFoundError(f"Could not find Outcar at {value} or \
+                                         at {value}/OUTCAR")
+
+        self.check_if_complete(value)
+        self.set_energy()
+        self.set_atoms()
+        self._folder = value
+
+    # endregion

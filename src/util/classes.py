@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 
 class Vector2D:
     @property
@@ -58,6 +60,15 @@ class Vector3D:
 
 
 class Position(Vector3D):
+
+    @property
+    def position_type(self) -> str:
+        return self._position_type
+
+    @position_type.setter
+    def position_type(self, value: str):
+        self._position_type = value
+
     def __str__(self) -> str:
         return f"Position:\n\tx: {self.x}\n\ty: {self.y}\n\tz: {self.z}"
 
@@ -65,3 +76,11 @@ class Position(Vector3D):
 class Force(Vector3D):
     def __str__(self) -> str:
         return f"Forces:\n\tx: {self.x}\n\ty: {self.y}\n\tz: {self.z}"
+
+
+@dataclass
+class Atom:
+    name: str
+    count: int
+    locations: list[Position] | None
+    forces: list[Force] | None
