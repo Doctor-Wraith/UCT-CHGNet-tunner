@@ -106,7 +106,7 @@ class CHGNET:
                 optimizer="Adam",
                 scheduler="CosLR",
                 criterion="MSE",
-                epochs=25,
+                epochs=10,
                 learning_rate=1e-3,
                 use_device="cpu",
                 print_freq=6,
@@ -121,7 +121,7 @@ class CHGNET:
                 optimizer="Adam",
                 scheduler="CosLR",
                 criterion="MSE",
-                epochs=25,
+                epochs=10,
                 learning_rate=1e-3,
                 use_device="cpu",
                 print_freq=6,
@@ -154,17 +154,15 @@ chargnet.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-index = 0
-with alive_progress.alive_bar(16) as bar:
-    for file in glob.glob(chargnet.data_folder + "/json/*.json")[4::]:
+index = 25
+with alive_progress.alive_bar(len(glob.glob(chargnet.data_folder +
+                                            "/json/*.json")[:index])) as bar:
+    for file in glob.glob(chargnet.data_folder + "/json/*.json")[:index]:
         print(f"\n\n{file}\n")
         chargnet.load_structures(file)
         chargnet.train()
-        index += 1
 
         bar()
-        if index == 16:
-            break
 
 
 print(glob.glob(chargnet.data_folder + "/json/*.json")[60])
