@@ -32,7 +32,7 @@ class CHGNET:
         self.stresses = None
         self.magmoms = None
 
-        self.data_folder = "./data/chgnet/"
+        self.data_folder = "./data/chgnet"
         self.chgnet = None
 
     def load_structures(self, file) -> None:
@@ -48,9 +48,10 @@ class CHGNET:
             "magmom") != [] else None
 
     def load_model(self):
+        print(glob.glob(r"./data/chgnet/models/bestE*")[0])
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"D:\UCT Stuff\Projects\UCT\11-27-2024\epoch*")[0]
+                glob.glob(r"./data/chgnet/models/bestE*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
@@ -98,19 +99,35 @@ class CHGNET:
             for param in layer.parameters():
                 param.requires_grad = False
 
-        self.trainer = Trainer(
-            model=self.chgnet,
-            targets="efs",
-            optimizer="Adam",
-            scheduler="CosLR",
-            criterion="MSE",
-            epochs=5,
-            learning_rate=1e-2,
-            use_device="cpu",
-            print_freq=6
-        )
+        try:
+            self.trainer = Trainer(
+                model=self.chgnet,
+                targets="efsm",
+                optimizer="Adam",
+                scheduler="CosLR",
+                criterion="MSE",
+                epochs=25,
+                learning_rate=1e-3,
+                use_device="cpu",
+                print_freq=6,
+            )
+            self.trainer.train(train_loader, val_loader, test_loader,
+                               save_dir=self.data_folder + "/models")
+        except KeyError:
 
-        self.trainer.train(train_loader, val_loader, test_loader)
+            self.trainer = Trainer(
+                model=self.chgnet,
+                targets="efs",
+                optimizer="Adam",
+                scheduler="CosLR",
+                criterion="MSE",
+                epochs=25,
+                learning_rate=1e-3,
+                use_device="cpu",
+                print_freq=6,
+            )
+            self.trainer.train(train_loader, val_loader, test_loader,
+                               save_dir=self.data_folder + "/models")
 
     # region Properties
     @property
@@ -121,6 +138,7 @@ class CHGNET:
     def data_folder(self, value: str) -> None:
         Path(value).mkdir(parents=True, exist_ok=True)
         Path(value + "/json").mkdir(parents=True, exist_ok=True)
+        Path(value + "/models").mkdir(parents=True, exist_ok=True)
         self._data_folder = value
     # endregion
 
@@ -136,19 +154,18 @@ chargnet.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-# index = 0
-# with alive_progress.alive_bar(len(
-#         glob.glob(chargnet.data_folder + "/json/*.json"))) as bar:
-#     for file in glob.glob(chargnet.data_folder + "/json/*.json")[25:]:
-#         print(f"\n\n{file}\n")
-#         chargnet.load_structures(file)
-#         chargnet.train()
-#         index += 1
+index = 0
+with alive_progress.alive_bar(16) as bar:
+    for file in glob.glob(chargnet.data_folder + "/json/*.json")[4::]:
+        print(f"\n\n{file}\n")
+        chargnet.load_structures(file)
+        chargnet.train()
+        index += 1
 
-#         if index == 35:
-#             break
+        bar()
+        if index == 16:
+            break
 
-#         bar()
 
 print(glob.glob(chargnet.data_folder + "/json/*.json")[60])
 chargnet.load_structures(glob.glob(chargnet.data_folder +
