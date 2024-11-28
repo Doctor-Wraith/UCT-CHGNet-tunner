@@ -23,7 +23,7 @@ CREATE_TABLE = {
         )
         """,
     "position": """
-        CREATE TABLE IF NOT EXISTS posistion (
+        CREATE TABLE IF NOT EXISTS position (
         position_id     TEXT    NOT NULL    PRIMARY KEY,
         atom_id         TEXT    NOT NULL,
         tuning_id      TEXT     NOT NULL,
@@ -57,7 +57,7 @@ ADD_ITEMS = {
         INSERT INTO tuning VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """,
     "position": """
-        INSERT INTO posistion VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO position VALUES (?, ?, ?, ?, ?, ?, ?)
     """,
     "force": """
         INSERT INTO force VALUES  (?, ?, ?, ?, ?, ?)

@@ -111,7 +111,7 @@ class CHGNET:
             print_freq=6,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
-                           save_dir=self.data_folder + "/models", 
+                           save_dir=self.data_folder + "/models",
                            save_test_result=True)
 
     # region Properties
@@ -129,8 +129,8 @@ class CHGNET:
 
 
 # Test
-chargnet = CHGNET()
-chargnet.load_model()
+charge_net = CHGNET()
+charge_net.load_model()
 
 # dirs = db.search_outcar_file_train(True)
 
@@ -140,18 +140,18 @@ chargnet.load_model()
 #         bar()
 
 index = 50
-with alive_progress.alive_bar(len(glob.glob(chargnet.data_folder +
+with alive_progress.alive_bar(len(glob.glob(charge_net.data_folder +
                                             "/json/*.json")[:index])) as bar:
-    for file in glob.glob(chargnet.data_folder + "/json/*.json")[:index]:
+    for file in glob.glob(charge_net.data_folder + "/json/*.json")[:index]:
         print(f"\n\n{file}\n")
-        chargnet.load_structures(file)
-        chargnet.train()
+        charge_net.load_structures(file)
+        charge_net.train()
 
         bar()
 
 
-print(glob.glob(chargnet.data_folder + "/json/*.json")[60])
-chargnet.load_structures(glob.glob(chargnet.data_folder +
-                                   "/json/*.json")[60])
+print(glob.glob(charge_net.data_folder + "/json/*.json")[60])
+charge_net.load_structures(glob.glob(charge_net.data_folder +
+                                     "/json/*.json")[60])
 
-chargnet.predict()
+charge_net.predict()

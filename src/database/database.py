@@ -28,7 +28,7 @@ class SqliteDataBase:
             cursor.execute(sqlstatements.ADD_ITEMS.get("atom"),
                            (atom.atom_id, atom.atom_name))
         except Exception as e:
-            print(f"falied: {e}")
+            print(f"failed: {e}")
         else:
             self.connection.commit()
 
@@ -61,7 +61,7 @@ class SqliteDataBase:
                             tunning.Energy,
                             tunning.outcar_path, tunning.training))
         except Exception as e:
-            print(f"falied: {e}")
+            print(f"failed: {e}")
         else:
             self.connection.commit()
 
@@ -74,7 +74,7 @@ class SqliteDataBase:
                             pos.y, pos.z,
                             pos.position_type))
         except Exception as e:
-            print(f"falied: {e}")
+            print(f"failed: {e}")
         else:
             self.connection.commit()
 
@@ -86,7 +86,7 @@ class SqliteDataBase:
                             force.tunning.tunning_id, force.x,
                             force.y, force.z))
         except Exception as e:
-            print(f"falied: {e}")
+            print(f"failed: {e}")
         else:
             self.connection.commit()
 

@@ -1,4 +1,4 @@
-# region Inports
+# region Imports
 try:
     from . import util
     from .database import data_classes, db
@@ -178,11 +178,11 @@ class Data:
     def to_dict(self) -> dict:
         atoms = {}
         for atom in self.atoms:
-            posistions = atom.locations
+            positions = atom.locations
             forces = atom.forces
 
             list_pos = []
-            for pos in posistions:
+            for pos in positions:
                 list_pos.append([pos.x, pos.y, pos.z])
 
             list_forces = []

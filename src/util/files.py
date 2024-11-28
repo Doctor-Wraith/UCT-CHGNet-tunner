@@ -20,7 +20,7 @@ def file_not_found(path: str) -> str:
 
 
 def scandir(dirname):
-    subfolders = [f.path for f in os.scandir(dirname) if f.is_dir()]
-    for dirname in list(subfolders):
-        subfolders.extend(scandir(dirname))
-    return subfolders
+    sub_folders = [f.path for f in os.scandir(dirname) if f.is_dir()]
+    for dirname in list(sub_folders):
+        sub_folders.extend(scandir(dirname))
+    return sub_folders
