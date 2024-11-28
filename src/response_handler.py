@@ -1,4 +1,4 @@
-from . import get_data, util
+from . import data, util
 import alive_progress
 
 
@@ -27,12 +27,13 @@ class ResponseHandler:
                 for folder in folders:
                     try:
                         print(folder)
-                        outcar = get_data.DataExtracter(folder)
+                        outcar = data.Data()
+                        outcar.folder = folder
 
                     except FileNotFoundError:
                         bar()
                         continue
-                    except util.exceptions.NotCompleteOUTCAR:
+                    except ValueError:
                         bar()
                         continue
                     else:
@@ -40,14 +41,15 @@ class ResponseHandler:
                         bar()
         else:
             path = input("Path> ")
-            outcar = get_data.DataExtracter(path)
+            outcar = data.Data()
+            outcar.folder = path
             self.data = [outcar]
 
-    def save(self):
+    def save(self, bar):
         if self.data is not None:
-            for data in self.data:
-                get_data.prep_data(data)
-
+            for dat in self.data:
+                data.save_to_data_base(dat)
+                bar()
         else:
             print("Please load data")
 
@@ -56,16 +58,13 @@ class ResponseHandler:
 
         if local_save == "y":
             with alive_progress.alive_bar(len(self.data)) as bar:
-                for data in self.data:
+                for dat in self.data:
                     try:
-                        data.save_outcar_file()
+                        dat.save_dir_local()
                     except Exception:
-                        pass
+                        bar()
                     else:
-                        self.save()
-                    bar()
+                        self.save(bar)
         else:
             with alive_progress.alive_bar(len(self.data)) as bar:
-                for data in self.data:
-                    self.save()
-                    bar()
+                self.save(bar)
