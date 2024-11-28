@@ -82,5 +82,6 @@ class Force(Vector3D):
 class Atom:
     name: str
     count: int
+    surface: bool
     locations: list[Position] | None
     forces: list[Force] | None
