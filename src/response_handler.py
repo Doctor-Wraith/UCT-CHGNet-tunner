@@ -1,4 +1,4 @@
-from . import data, util
+from . import data_extractor, util
 import alive_progress
 
 
@@ -27,7 +27,7 @@ class ResponseHandler:
                 for folder in folders:
                     try:
                         print(folder)
-                        outcar = data.Data()
+                        outcar = data_extractor.Data()
                         outcar.folder = folder
 
                     except FileNotFoundError:
@@ -41,14 +41,14 @@ class ResponseHandler:
                         bar()
         else:
             path = input("Path> ")
-            outcar = data.Data()
+            outcar = data_extractor.Data()
             outcar.folder = path
             self.data = [outcar]
 
     def save(self, bar):
         if self.data is not None:
             for dat in self.data:
-                data.save_to_data_base(dat)
+                data_extractor.save_to_data_base(dat)
                 bar()
         else:
             print("Please load data")
