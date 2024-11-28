@@ -99,35 +99,20 @@ class CHGNET:
             for param in layer.parameters():
                 param.requires_grad = False
 
-        try:
-            self.trainer = Trainer(
-                model=self.chgnet,
-                targets="efsm",
-                optimizer="Adam",
-                scheduler="CosLR",
-                criterion="MSE",
-                epochs=10,
-                learning_rate=1e-3,
-                use_device="cpu",
-                print_freq=6,
-            )
-            self.trainer.train(train_loader, val_loader, test_loader,
-                               save_dir=self.data_folder + "/models")
-        except KeyError:
-
-            self.trainer = Trainer(
-                model=self.chgnet,
-                targets="efs",
-                optimizer="Adam",
-                scheduler="CosLR",
-                criterion="MSE",
-                epochs=10,
-                learning_rate=1e-3,
-                use_device="cpu",
-                print_freq=6,
-            )
-            self.trainer.train(train_loader, val_loader, test_loader,
-                               save_dir=self.data_folder + "/models")
+        self.trainer = Trainer(
+            model=self.chgnet,
+            targets="ef",
+            optimizer="Adam",
+            scheduler="CosLR",
+            criterion="MSE",
+            epochs=50,
+            learning_rate=1e-3,
+            use_device="cpu",
+            print_freq=6,
+        )
+        self.trainer.train(train_loader, val_loader, test_loader,
+                           save_dir=self.data_folder + "/models", 
+                           save_test_result=True)
 
     # region Properties
     @property
@@ -154,7 +139,7 @@ chargnet.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-index = 25
+index = 50
 with alive_progress.alive_bar(len(glob.glob(chargnet.data_folder +
                                             "/json/*.json")[:index])) as bar:
     for file in glob.glob(chargnet.data_folder + "/json/*.json")[:index]:
