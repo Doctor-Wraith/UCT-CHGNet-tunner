@@ -32,7 +32,7 @@ class CHGNET:
         self.stresses = None
         self.magmoms = None
 
-        self.data_folder = "./data/chgnet/"
+        self.data_folder = "./data/chgnet"
         self.chgnet = None
 
     def load_structures(self, file) -> None:
@@ -48,14 +48,16 @@ class CHGNET:
             "magmom") != [] else None
 
     def load_model(self):
+        print(glob.glob(r"./data/chgnet/models/bestE*")[0])
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"D:\UCT Stuff\Projects\UCT\11-26-2024\epoch*")[0]
+                glob.glob(r"./data/chgnet/models/bestE*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
 
     def predict(self):
+        self.load_model()
         struct = random.choice(self.structures)
         prediction = self.chgnet.predict_structure(struct)
         for key, unit in [
@@ -99,17 +101,18 @@ class CHGNET:
 
         self.trainer = Trainer(
             model=self.chgnet,
-            targets="efs",
+            targets="ef",
             optimizer="Adam",
             scheduler="CosLR",
             criterion="MSE",
-            epochs=5,
-            learning_rate=1e-2,
+            epochs=50,
+            learning_rate=1e-3,
             use_device="cpu",
-            print_freq=6
+            print_freq=6,
         )
-
-        self.trainer.train(train_loader, val_loader, test_loader)
+        self.trainer.train(train_loader, val_loader, test_loader,
+                           save_dir=self.data_folder + "/models", 
+                           save_test_result=True)
 
     # region Properties
     @property
@@ -120,6 +123,7 @@ class CHGNET:
     def data_folder(self, value: str) -> None:
         Path(value).mkdir(parents=True, exist_ok=True)
         Path(value + "/json").mkdir(parents=True, exist_ok=True)
+        Path(value + "/models").mkdir(parents=True, exist_ok=True)
         self._data_folder = value
     # endregion
 
@@ -135,13 +139,19 @@ chargnet.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-with alive_progress.alive_bar(len(
-        glob.glob(chargnet.data_folder + "/json/*.json"))) as bar:
-
-    for file in glob.glob(chargnet.data_folder + "/json/*.json"):
+index = 50
+with alive_progress.alive_bar(len(glob.glob(chargnet.data_folder +
+                                            "/json/*.json")[:index])) as bar:
+    for file in glob.glob(chargnet.data_folder + "/json/*.json")[:index]:
         print(f"\n\n{file}\n")
         chargnet.load_structures(file)
         chargnet.train()
+
         bar()
+
+
+print(glob.glob(chargnet.data_folder + "/json/*.json")[60])
+chargnet.load_structures(glob.glob(chargnet.data_folder +
+                                   "/json/*.json")[60])
 
 chargnet.predict()
