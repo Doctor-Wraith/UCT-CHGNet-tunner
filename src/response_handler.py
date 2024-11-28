@@ -45,11 +45,11 @@ class ResponseHandler:
             outcar.folder = path
             self.data = [outcar]
 
-    def save(self):
+    def save(self, bar):
         if self.data is not None:
             for dat in self.data:
-                dat.save_to_data_base()
-
+                data.save_to_data_base(dat)
+                bar()
         else:
             print("Please load data")
 
@@ -62,12 +62,9 @@ class ResponseHandler:
                     try:
                         dat.save_dir_local()
                     except Exception:
-                        pass
+                        bar()
                     else:
-                        self.save()
-                    bar()
+                        self.save(bar)
         else:
             with alive_progress.alive_bar(len(self.data)) as bar:
-                for dat in self.data:
-                    self.save()
-                    bar()
+                self.save(bar)

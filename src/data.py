@@ -38,8 +38,8 @@ class Data:
                 element = "".join(re.findall("([a-zA-Z])", i))
                 if element == atom_name:
                     return (True, i)
-                else:
-                    return (False, None)
+
+        return (False, None)
 
     def set_atoms(self):
         for line in self.outcar:
@@ -204,100 +204,6 @@ class Data:
         }
         return out
 
-    @staticmethod
-    def get_adsorbates(atoms: dict[str, data_classes.Atom]) -> list[
-            data_classes.Atom | None]:
-        atoms = list(atoms.values())
-        try:
-            adsorbate_1 = atoms[0]
-        except (TypeError, IndexError):
-            adsorbate_1 = None
-        try:
-            adsorbate_2 = atoms[1]
-        except (TypeError, IndexError):
-            adsorbate_2 = None
-        try:
-            adsorbate_3 = atoms[2]
-        except (TypeError, IndexError):
-            adsorbate_3 = None
-
-        return adsorbate_1, adsorbate_2, adsorbate_3
-
-    def save_to_data_base(self):
-        def check_db_path(path: str) -> bool:
-            result = db.search_outcar_file(path)
-            return True if result != [] else False
-
-        if check_db_path(self.folder):
-            return
-
-        atoms = {}
-        positions: list[data_classes.Position] = []
-        forces: list[data_classes.Force] = []
-        surface = None
-
-        # data_dict = self.to_dict()
-        # dict_atoms = data_dict["atoms"] # noqa
-        for atom in self.atoms:
-            atom_id = db.search_atom_id(atom.name)
-            atom_uid = atom_id[0] if atom_id is not None else uuid.uuid4().hex
-            atom_db = data_classes.Atom(atom_uid, atom.name)
-            if not atom.surface:
-                atoms[atom.name] = atom_db
-            else:
-                surface = atom_db
-
-            for pos in atom.locations:
-                position = data_classes.Position(
-                    uuid.uuid4().hex,
-                    atom_db,
-                    None,
-                    pos.position_type,
-                    pos.x,
-                    pos.y,
-                    pos.z
-                )
-                positions.append(position)
-
-            for force in atom.forces:
-                f = data_classes.Force(
-                    uuid.uuid4().hex,
-                    atom_db,
-                    None,
-                    force.x,
-                    force.y,
-                    force.z
-                )
-                forces.append(f)
-
-        adsorbate_1, adsorbate_2, adsorbate_3 = self.get_adsorbates(atoms)
-        tune = data_classes.Tunning(
-            uuid.uuid4().hex,
-            surface,
-            adsorbate_1,
-            adsorbate_2,
-            adsorbate_3,
-            self.energy,
-            self.folder,
-            random.choices([True, False], [80, 20])[0]
-        )
-
-        if (surface is not None) and (db.search_atom_id(surface) is not None):
-            db.add_atom(surface)
-
-        for atom in atoms.values():
-            if db.search_atom_id(atom.atom_name) is None:
-                db.add_atom(atom)
-
-        for pos in positions:
-            pos.tunning = tune
-            db.add_position(pos)
-        for force in forces:
-            force.tunning = tune
-            db.add_force(force)
-
-        db.add_tuning(tune)
-
     # endregion
     # region Calculations
     def calc_distance(self) -> dict:
@@ -322,3 +228,101 @@ class Data:
         return distances
 
     # endregion
+
+
+# region Database
+def get_adsorbates(atoms: dict[str, data_classes.Atom]) -> list[
+        data_classes.Atom | None]:
+    atoms = list(atoms.values())
+    try:
+        adsorbate_1 = atoms[0]
+    except (TypeError, IndexError):
+        adsorbate_1 = None
+    try:
+        adsorbate_2 = atoms[1]
+    except (TypeError, IndexError):
+        adsorbate_2 = None
+    try:
+        adsorbate_3 = atoms[2]
+    except (TypeError, IndexError):
+        adsorbate_3 = None
+
+    return adsorbate_1, adsorbate_2, adsorbate_3
+
+
+def save_to_data_base(data: Data):
+    def check_db_path(path: str) -> bool:
+        result = db.search_outcar_file(path)
+        return True if result != [] else False
+
+    if check_db_path(data.folder):
+        return
+
+    atoms = {}
+    positions: list[data_classes.Position] = []
+    forces: list[data_classes.Force] = []
+    surface = None
+
+    # data_dict = self.to_dict()
+    # dict_atoms = data_dict["atoms"] # noqa
+    for atom in data.atoms:
+        atom_id = db.search_atom_id(atom.name)
+        atom_uid = atom_id[0] if atom_id is not None else uuid.uuid4().hex
+        atom_db = data_classes.Atom(atom_uid, atom.name)
+        if not atom.surface:
+            atoms[atom.name] = atom_db
+        else:
+            surface = atom_db
+
+        for pos in atom.locations:
+            position = data_classes.Position(
+                uuid.uuid4().hex,
+                atom_db,
+                None,
+                pos.position_type,
+                pos.x,
+                pos.y,
+                pos.z
+            )
+            positions.append(position)
+
+        for force in atom.forces:
+            f = data_classes.Force(
+                uuid.uuid4().hex,
+                atom_db,
+                None,
+                force.x,
+                force.y,
+                force.z
+            )
+            forces.append(f)
+
+    adsorbate_1, adsorbate_2, adsorbate_3 = get_adsorbates(atoms)
+    tune = data_classes.Tunning(
+        uuid.uuid4().hex,
+        surface,
+        adsorbate_1,
+        adsorbate_2,
+        adsorbate_3,
+        data.energy,
+        data.folder,
+        random.choices([True, False], [80, 20])[0]
+    )
+
+    if (surface is not None) and (
+            db.search_atom_id(surface.atom_name) is None):
+        db.add_atom(surface)
+
+    for atom in atoms.values():
+        if db.search_atom_id(atom.atom_name) is None:
+            db.add_atom(atom)
+
+    for pos in positions:
+        pos.tunning = tune
+        db.add_position(pos)
+    for force in forces:
+        force.tunning = tune
+        db.add_force(force)
+
+    db.add_tuning(tune)
+# endregion
