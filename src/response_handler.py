@@ -3,6 +3,7 @@ import alive_progress
 from .database import db
 from .chargnet import charge_net, CHGNET
 import glob
+import random
 
 
 class ResponseHandler:
@@ -84,10 +85,16 @@ class ResponseHandler:
         testing_amount = int(input("Number of testing data> "))
 
         data_training = db.search_outcar_file_train(True)
-        training_data = data_training[:train_amount]
+        num = random.randint(0, len(data_training) - 1 - train_amount)
+        training_data = data_training[
+            num:
+            num + train_amount]
 
         data_testing = db.search_outcar_energy(False)
-        testing_data = data_testing[:testing_amount]
+        num_2 = random.randint(0, len(data_testing) - 1 - testing_amount)
+        testing_data = data_testing[
+            num_2:
+            num_2 + testing_amount]
 
         charge_net.load_model()
 

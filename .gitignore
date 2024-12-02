@@ -1,5 +1,4 @@
-data/*.db
-data/chgnet/json
+data/
 .venv/
 .vscode/
 __pycache__/
