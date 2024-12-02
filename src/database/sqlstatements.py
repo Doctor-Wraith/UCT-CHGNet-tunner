@@ -75,3 +75,7 @@ SEARCH_OUTCAR_PATH = """SELECT tuning_id FROM tuning WHERE outcar_path = ?"""
 SEARCH_OUTCAR_TRAIN_PATH = """
         SELECT outcar_path from tuning WHERE training = ?
 """
+
+SEARCH_OUTCAR_ENERGY = """
+        SELECT energy, outcar_path from tuning WHERE training = ?
+"""

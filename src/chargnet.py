@@ -48,7 +48,6 @@ class CHGNET:
             "magmom") != [] else None
 
     def load_model(self):
-        print(glob.glob(r"./data/chgnet/models/bestE*")[0])
         try:
             self.chgnet = CHGNet.from_file(
                 glob.glob(r"./data/chgnet/models/bestE*")[0]
@@ -61,17 +60,20 @@ class CHGNET:
         struct = random.choice(self.structures)
         prediction = self.chgnet.predict_structure(struct)
         for key, unit in [
-            ("energy", "eV/atom"),
-            ("forces", "eV/A"),
-            ("stress", "GPa"),
-            ("magmom", "mu_B"),
+            ("energy", "eV/atom")
                 ]:
             print(f"CHGNet-predicted {key} ({unit}):\n{prediction[key[0]]}\n")
 
-    def save_vasp_to_json(self, directory: str) -> None:
+    def save_vasp_to_json(self, directory: str, train: bool = True) -> None:
         name = directory.replace("\\", "/").split("/")[-1]
-        parse_vasp_dir(directory,
-                       save_path=f'{self.data_folder}/json/{name}.json')
+        if train:
+            parse_vasp_dir(directory,
+                           save_path=f'{self.data_folder}/json' +
+                           f'/train/{name}.json')
+        else:
+            parse_vasp_dir(directory,
+                           save_path=f'{self.data_folder}/json' +
+                           f'/test/{name}.json')
 
     def train(self):
         dataset = StructureData(
@@ -130,7 +132,7 @@ class CHGNET:
 
 # Test
 charge_net = CHGNET()
-charge_net.load_model()
+# charge_net.load_model()
 
 # dirs = db.search_outcar_file_train(True)
 
@@ -139,19 +141,19 @@ charge_net.load_model()
 #         chargnet.save_vasp_to_json(directory[0])
 #         bar()
 
-index = 50
-with alive_progress.alive_bar(len(glob.glob(charge_net.data_folder +
-                                            "/json/*.json")[:index])) as bar:
-    for file in glob.glob(charge_net.data_folder + "/json/*.json")[:index]:
-        print(f"\n\n{file}\n")
-        charge_net.load_structures(file)
-        charge_net.train()
+# index = 50
+# with alive_progress.alive_bar(len(glob.glob(charge_net.data_folder +
+#                                             "/json/*.json")[:index])) as bar:
+#     for file in glob.glob(charge_net.data_folder + "/json/*.json")[:index]:
+#         print(f"\n\n{file}\n")
+#         charge_net.load_structures(file)
+#         charge_net.train()
 
-        bar()
+#         bar()
 
 
-print(glob.glob(charge_net.data_folder + "/json/*.json")[60])
-charge_net.load_structures(glob.glob(charge_net.data_folder +
-                                     "/json/*.json")[60])
+# print(glob.glob(charge_net.data_folder + "/json/*.json")[60])
+# charge_net.load_structures(glob.glob(charge_net.data_folder +
+#                                      "/json/*.json")[60])
 
-charge_net.predict()
+# charge_net.predict()

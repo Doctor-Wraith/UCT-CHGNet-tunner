@@ -118,6 +118,14 @@ class SqliteDataBase:
 
         return result
 
+    def search_outcar_energy(self, training: bool = False) -> list:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_OUTCAR_ENERGY, (training, ))
+
+        results = cursor.fetchall()
+
+        return results
+
     # endregion
 
 

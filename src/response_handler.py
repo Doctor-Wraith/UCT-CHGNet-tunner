@@ -1,10 +1,15 @@
 from . import data_extractor, util
 import alive_progress
+from .database import db
+from .chargnet import charge_net, CHGNET
+import glob
 
 
 class ResponseHandler:
     LOAD_DATA = ["load", "--l"]
     SAVE_LOCAL = ["save", '--s']
+    TRAIN = ["train", '--t']
+    UNLOAD = ["clear"]
 
     def __init__(self) -> None:
         self.data = []
@@ -15,6 +20,11 @@ class ResponseHandler:
             self.load_data()
         elif command in self.SAVE_LOCAL:
             self.save_local()
+        elif command in self.TRAIN:
+            self.train()
+        elif command in self.UNLOAD:
+            del self.data
+            self.data = []
 
     def load_data(self):
         multiple = input("Recursively Search directory [Y/n]> ").lower()
@@ -68,3 +78,51 @@ class ResponseHandler:
         else:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 self.save(bar)
+
+    def train(self):
+        train_amount = int(input("Number of training data> "))
+        testing_amount = int(input("Number of testing data> "))
+
+        data_training = db.search_outcar_file_train(True)
+        training_data = data_training[:train_amount]
+
+        data_testing = db.search_outcar_energy(False)
+        testing_data = data_testing[:testing_amount]
+
+        charge_net.load_model()
+
+        print("Turning to vasp to json")
+        with alive_progress.alive_bar(train_amount) as bar:
+            for data in training_data:
+                print(data)
+                charge_net.save_vasp_to_json(data[0])
+                bar()
+
+        print("Turing testing vasp to json")
+        with alive_progress.alive_bar(testing_amount) as bar:
+            for data in testing_data:
+                print(data)
+                charge_net.save_vasp_to_json(data[1], False)
+                bar()
+
+        print("\n\nTraining\n\n")
+
+        with alive_progress.alive_bar(train_amount) as bar:
+            print(glob.glob(charge_net.data_folder +
+                            "/json/train/*.json"))
+            for file in glob.glob(charge_net.data_folder +
+                                  "/json/train/*.json")[:train_amount]:
+                print(f"\n\n{file}\n\n")
+                charge_net.load_structures(file)
+                charge_net.train()
+
+                testing_model = CHGNET()
+                for test in glob.glob(testing_model.data_folder +
+                                      "/json/test/*.json")[:testing_amount]:
+                    print(f"\n\n{test}\n\n")
+                    testing_model.load_structures(test)
+                    testing_model.predict()
+
+                del testing_model
+
+                bar()
