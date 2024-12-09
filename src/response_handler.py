@@ -26,6 +26,8 @@ class ResponseHandler:
         elif command in self.UNLOAD:
             del self.data
             self.data = []
+        else:
+            print(f"The command {command} does not exists")
 
     def load_data(self):
         multiple = util.get_input(
