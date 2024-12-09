@@ -11,6 +11,7 @@ class ResponseHandler:
     SAVE_LOCAL = ["save", '--s']
     TRAIN = ["train", '--t']
     UNLOAD = ["clear"]
+    DB_RESET = ["--dbr"]
 
     def __init__(self) -> None:
         self.data = []
@@ -26,6 +27,8 @@ class ResponseHandler:
         elif command in self.UNLOAD:
             del self.data
             self.data = []
+        elif command in self.DB_RESET:
+            db.clear_database()
         else:
             print(f"The command {command} does not exists")
 
@@ -131,7 +134,7 @@ class ResponseHandler:
                 testing_model = CHGNET()
                 testing_files = self.get_files(
                     glob.glob(testing_model.data_folder +
-                              "/json/test/*.json")[:testing_amount])
+                              "/json/test/*.json"), testing_amount)
                 for test in testing_files:
                     print(f"\n\n{test}\n\n")
                     testing_model.load_structures(test)
@@ -162,4 +165,4 @@ class ResponseHandler:
                 file = random.choice(files)
                 out.append(file)
                 files.remove(file)
-                del file
+            return out

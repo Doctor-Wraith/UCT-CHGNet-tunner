@@ -15,7 +15,7 @@ try:
 except ImportError:
     from .database import db # noqa
 import random
-import alive_progress # noqa
+import os
 
 # endregion
 
@@ -66,14 +66,18 @@ class CHGNET:
 
     def save_vasp_to_json(self, directory: str, train: bool = True) -> None:
         name = directory.replace("\\", "/").split("/")[-1]
-        if train:
-            parse_vasp_dir(directory,
-                           save_path=f'{self.data_folder}/json' +
-                           f'/train/{name}.json')
-        else:
-            parse_vasp_dir(directory,
-                           save_path=f'{self.data_folder}/json' +
-                           f'/test/{name}.json')
+        path = f'{self.data_folder}/json/train/{name}.json' if train else f'{self.data_folder}/json/test/{name}.json'
+        # if train:
+
+        #     parse_vasp_dir(directory,
+        #                    save_path=f'{self.data_folder}/json' +
+        #                    f'/train/{name}.json')
+        # else:
+        #     parse_vasp_dir(directory,
+        #                    save_path=f'{self.data_folder}/json' +
+        #                    f'/test/{name}.json')
+        if not os.path.isfile(path):
+            parse_vasp_dir(directory, save_path=path)
 
     def train(self):
         dataset = StructureData(
@@ -110,7 +114,7 @@ class CHGNET:
             epochs=50,
             learning_rate=1e-3,
             use_device="cpu",
-            print_freq=6,
+            print_freq=100,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
                            save_dir=self.data_folder + "/models",

@@ -19,7 +19,7 @@ class SqliteDataBase:
         for name, statement in sqlstatements.CREATE_TABLE.items():
             cursor.execute(statement)
 
-    # region ################# INSERTS #################
+    # region INSERTS
     def add_atom(self, atom: data_classes.Atom):
         cursor = self.connection.cursor()
         if atom is None:
@@ -92,7 +92,14 @@ class SqliteDataBase:
 
     # endregion
 
-    # region ################# SEARCHES #################
+    # region SEARCHES
+    def clear_database(self) -> None:
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE tuning")
+        cursor.execute("DROP TABLE atom")
+        cursor.execute("DROP TABLE position")
+        cursor.execute("DROP TABLE force")
+        self.create_tables()
 
     def search_atom_id(self, atom_name: str) -> str:
         cursor = self.connection.cursor()
