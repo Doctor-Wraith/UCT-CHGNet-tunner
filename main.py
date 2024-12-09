@@ -8,6 +8,8 @@ def create_folders():
         "./data/chgnet",
         "./data/chgnet/models",
         "./data/chgnet/json",
+        "./data/chgnet/json/train",
+        "./data/chgnet/json/test",
         "./data/OUTCAR"
     ]
     logger.info("File Checker", "Checking if Folders exists",

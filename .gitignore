@@ -4,3 +4,5 @@ data/
 __pycache__/
 New_opt_p3x3/
 logs.log
+data\chgnet\models
+data\chgnet\models\test_result.json
