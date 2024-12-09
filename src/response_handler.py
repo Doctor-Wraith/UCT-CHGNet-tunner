@@ -28,10 +28,12 @@ class ResponseHandler:
             self.data = []
 
     def load_data(self):
-        multiple = input("Recursively Search directory [Y/n]> ").lower()
+        multiple = util.get_input(
+            "Recursively Search directory [Y/n]> "
+            ).lower()
 
         if multiple == "y":
-            path = input("Path> ")
+            path = util.get_input("Path> ")
             self.data = []
             folders = util.scandir(path)
             with alive_progress.alive_bar(len(folders)) as bar:
@@ -51,7 +53,7 @@ class ResponseHandler:
                         self.data.append(outcar)
                         bar()
         else:
-            path = input("Path> ")
+            path = util.get_input("Path> ")
             outcar = data_extractor.Data()
             outcar.folder = path
             self.data = [outcar]
@@ -65,7 +67,7 @@ class ResponseHandler:
             print("Please load data")
 
     def save_local(self):
-        local_save = input("Save local [Y/n]> ").strip().lower()
+        local_save = util.get_input("Save local [Y/n]> ").strip().lower()
 
         if local_save == "y":
             with alive_progress.alive_bar(len(self.data)) as bar:
@@ -81,8 +83,8 @@ class ResponseHandler:
                 self.save(bar)
 
     def train(self):
-        train_amount = int(input("Number of training data> "))
-        testing_amount = int(input("Number of testing data> "))
+        train_amount = int(util.get_input("Number of training data> "))
+        testing_amount = int(util.get_input("Number of testing data> "))
 
         data_training = db.search_outcar_file_train(True)
         num = random.randint(0, len(data_training) - 1 - train_amount)

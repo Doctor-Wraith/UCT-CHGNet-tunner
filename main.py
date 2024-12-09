@@ -1,5 +1,6 @@
 from pathlib import Path
 from src.util import logger
+from src import util
 
 
 def create_folders():
@@ -34,7 +35,7 @@ def main():
     logger.info("Start", "Starting",
                 False)
     while running:
-        command = input("Enter command> ").lower()
+        command = util.get_input("Enter command> ").lower()
 
         if command in ["q", "quit", "close", 'stop']:
             logger.info("Program", "Stopping")
