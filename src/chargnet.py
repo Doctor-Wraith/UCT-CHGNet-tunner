@@ -29,8 +29,8 @@ class CHGNET:
         self.structures: list[Structure] = []
         self.energies = []
         self.forces = []
-        self.stresses = None
-        self.magmoms = None
+        self.stresses = []
+        self.magmoms = []
 
         self.data_folder = "./data/chgnet"
         self.chgnet = None
@@ -38,14 +38,21 @@ class CHGNET:
     def load_structures(self, file) -> None:
         dataset_dict = read_json(file)
 
-        self.structures = [Structure.from_dict(struct) for struct in
-                           dataset_dict["structure"]]
-        self.energies = dataset_dict["energy_per_atom"]
-        self.forces = dataset_dict["force"]
-        self.stresses = dataset_dict.get("stress") if dataset_dict.get(
-            "stress") != [] else None
-        self.magmoms = dataset_dict.get("magmom") if dataset_dict.get(
-            "magmom") != [] else None
+        self.structures.append([Structure.from_dict(struct) for struct in
+                                dataset_dict["structure"]])
+        self.energies.append(dataset_dict["energy_per_atom"])
+        self.forces.append(dataset_dict["force"])
+        self.stresses.append(dataset_dict.get("stress") if dataset_dict.get(
+                            "stress") != [] else None)
+        self.magmoms.append(dataset_dict.get("magmom") if dataset_dict.get(
+            "magmom") != [] else None)
+
+    def clear_structures(self) -> None:
+        self.structures = []
+        self.energies = []
+        self.forces = []
+        self.stresses = []
+        self.magmoms = []
 
     def load_model(self):
         try:
@@ -76,6 +83,7 @@ class CHGNET:
                            f'/test/{name}.json')
 
     def train(self):
+
         dataset = StructureData(
             structures=self.structures,
             energies=self.energies,

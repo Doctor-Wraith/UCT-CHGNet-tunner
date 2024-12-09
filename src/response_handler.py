@@ -113,6 +113,15 @@ class ResponseHandler:
                 bar()
 
         print("\n\nTraining\n\n")
+        with alive_progress.alive_bar(train_amount) as bar:
+            # TODO: Add Logging here
+            # charge_net.clear_structures()
+            # folder = glob.glob(charge_net.data_folder + "/json/train/*.json")
+            # train_data = self.get_random_amount_files(folder, train_amount)
+            # for file in training_data:
+            #     # add to structures
+            #     ...
+            ...
 
         with alive_progress.alive_bar(train_amount) as bar:
             print(glob.glob(charge_net.data_folder +
@@ -121,15 +130,30 @@ class ResponseHandler:
                                   "/json/train/*.json")[:train_amount]:
                 print(f"\n\n{file}\n\n")
                 charge_net.load_structures(file)
-                charge_net.train()
+            charge_net.train()
 
-                testing_model = CHGNET()
-                for test in glob.glob(testing_model.data_folder +
-                                      "/json/test/*.json")[:testing_amount]:
-                    print(f"\n\n{test}\n\n")
-                    testing_model.load_structures(test)
-                    testing_model.predict()
+            testing_model = CHGNET()
+            for test in glob.glob(testing_model.data_folder +
+                                  "/json/test/*.json")[:testing_amount]:
+                print(f"\n\n{test}\n\n")
+                testing_model.load_structures(test)
+                testing_model.predict()
 
-                del testing_model
+            del testing_model
 
-                bar()
+            bar()
+
+    def get_random_amount_files(self, files: list, amount: int) -> list:
+
+        if len(files) < amount:
+            raise IndexError()
+        if len(files) == amount:
+            return files
+        else:
+            out = []
+            for _ in range(amount):
+                file = random.choice(files)
+                out.append(file)
+                files.remove(file)
+            
+            return out
