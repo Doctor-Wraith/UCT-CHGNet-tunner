@@ -63,10 +63,11 @@ class CHGNET:
             ("energy", "eV/atom")
                 ]:
             print(f"CHGNet-predicted {key} ({unit}):\n{prediction[key[0]]}\n")
+            return prediction[key[0]]
 
     def save_vasp_to_json(self, directory: str, train: bool = True) -> None:
         name = directory.replace("\\", "/").split("/")[-1]
-        path = f'{self.data_folder}/json/train/{name}.json' if train else f'{self.data_folder}/json/test/{name}.json'
+        path = f'{self.data_folder}/json/train/{name}.json' if train else f'{self.data_folder}/json/test/{name}.json' # noqa
         # if train:
 
         #     parse_vasp_dir(directory,
@@ -111,7 +112,7 @@ class CHGNET:
             optimizer="Adam",
             scheduler="CosLR",
             criterion="MSE",
-            epochs=50,
+            epochs=25,
             learning_rate=1e-3,
             use_device="cpu",
             print_freq=100,

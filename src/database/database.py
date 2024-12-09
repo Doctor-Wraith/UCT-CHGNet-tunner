@@ -54,9 +54,11 @@ class SqliteDataBase:
         else:
             surface = tunning.surface.atom_id
 
+        name = tunning.outcar_path.replace("\\", "/").split("/")[-1]
+
         try:
             cursor.execute(sqlstatements.ADD_ITEMS.get("tune"),
-                           (tunning.tunning_id, surface,
+                           (tunning.tunning_id, name, surface,
                             adsorbate_1, adsorbate_2, adsorbate_3,
                             tunning.Energy,
                             tunning.outcar_path, tunning.training))
@@ -132,6 +134,23 @@ class SqliteDataBase:
         results = cursor.fetchall()
 
         return results
+
+    def get_energy(self, name: str) -> float:
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT energy FROM tuning WHERE name = ?", (name,))
+        results = cursor.fetchone()
+
+        return results
+
+    def get_atom_count(self, name: str) -> int:
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT tuning_id FROM tuning WHERE name = ?", (name,))
+        uid = cursor.fetchone()[0]
+        cursor.execute("SELECT count(*) FROM position WHERE tuning_id = ?",
+                       (uid,))
+        count = cursor.fetchone()[0]
+        print(count)
+        return count
 
     # endregion
 

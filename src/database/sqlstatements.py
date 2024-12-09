@@ -9,6 +9,7 @@ CREATE_TABLE = {
     "tuning": """
         CREATE TABLE IF NOT EXISTS tuning (
         tuning_id      TEXT         NOT NULL    PRIMARY KEY,
+        name            TEXT        NOT NULL,
         surface_id      TEXT,
         adsorbate_1_id  TEXT,
         adsorbate_2_id  TEXT,
@@ -54,7 +55,7 @@ ADD_ITEMS = {
         INSERT INTO atom VALUES (?,?)
     """,
     "tune": """
-        INSERT INTO tuning VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO tuning VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
     "position": """
         INSERT INTO position VALUES (?, ?, ?, ?, ?, ?, ?)

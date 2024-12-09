@@ -12,6 +12,7 @@ class ResponseHandler:
     TRAIN = ["train", '--t']
     UNLOAD = ["clear"]
     DB_RESET = ["--dbr"]
+    CHECK = ["check"]
 
     def __init__(self) -> None:
         self.data = []
@@ -29,6 +30,8 @@ class ResponseHandler:
             self.data = []
         elif command in self.DB_RESET:
             db.clear_database()
+        elif command in self.CHECK:
+            self.check()
         else:
             print(f"The command {command} does not exists")
 
@@ -87,21 +90,35 @@ class ResponseHandler:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 self.save(bar)
 
+    def check(self):
+        i = 0
+        testing_amount = int(util.get_input('testing amount> '))
+
+        testing_model = CHGNET()
+        testing_files = self.get_files(
+            glob.glob(testing_model.data_folder +
+                      "/json/test/*.json"), testing_amount)
+        for test in testing_files:
+            name = test.replace("\\", "/").split("/")[-1].replace(".json", "")
+            i += 1
+            print(f"\n\n{test}\n\n")
+            testing_model.load_structures(test)
+            e = testing_model.predict()
+            util.graph.add_data_point(i, e * db.get_atom_count(name))
+            e_actual = db.get_energy(name)
+            util.graph.add_actual(i, e_actual)
+
+        del testing_model
+        util.graph.show()
+
     def train(self):
         train_amount = int(util.get_input("Number of training data> "))
-        testing_amount = int(util.get_input("Number of testing data> "))
 
         data_training = db.search_outcar_file_train(True)
         num = random.randint(0, len(data_training) - 1 - train_amount)
         training_data = data_training[
             num:
             num + train_amount]
-
-        data_testing = db.search_outcar_energy(False)
-        num_2 = random.randint(0, len(data_testing) - 1 - testing_amount)
-        testing_data = data_testing[
-            num_2:
-            num_2 + testing_amount]
 
         charge_net.load_model()
 
@@ -112,15 +129,6 @@ class ResponseHandler:
                 charge_net.save_vasp_to_json(data[0])
                 bar()
 
-        print("Turing testing vasp to json")
-        with alive_progress.alive_bar(testing_amount) as bar:
-            for data in testing_data:
-                print(data)
-                charge_net.save_vasp_to_json(data[1], False)
-                bar()
-
-        print("\n\nTraining\n\n")
-
         with alive_progress.alive_bar(train_amount) as bar:
             # TODO: Add logging here
             files = glob.glob(charge_net.data_folder +
@@ -130,17 +138,6 @@ class ResponseHandler:
                 print(f"\n\n{file}\n\n")
                 charge_net.load_structures(file)
                 charge_net.train()
-
-                testing_model = CHGNET()
-                testing_files = self.get_files(
-                    glob.glob(testing_model.data_folder +
-                              "/json/test/*.json"), testing_amount)
-                for test in testing_files:
-                    print(f"\n\n{test}\n\n")
-                    testing_model.load_structures(test)
-                    testing_model.predict()
-
-                del testing_model
 
                 bar()
 
