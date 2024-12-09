@@ -115,17 +115,20 @@ class ResponseHandler:
         print("\n\nTraining\n\n")
 
         with alive_progress.alive_bar(train_amount) as bar:
-            print(glob.glob(charge_net.data_folder +
-                            "/json/train/*.json"))
-            for file in glob.glob(charge_net.data_folder +
-                                  "/json/train/*.json")[:train_amount]:
+            # TODO: Add logging here
+            files = glob.glob(charge_net.data_folder +
+                              "/json/train/*.json")
+            files = self.get_files(files, train_amount)
+            for file in files:
                 print(f"\n\n{file}\n\n")
                 charge_net.load_structures(file)
                 charge_net.train()
 
                 testing_model = CHGNET()
-                for test in glob.glob(testing_model.data_folder +
-                                      "/json/test/*.json")[:testing_amount]:
+                testing_files = self.get_files(
+                    glob.glob(testing_model.data_folder +
+                              "/json/test/*.json")[:testing_amount])
+                for test in testing_files:
                     print(f"\n\n{test}\n\n")
                     testing_model.load_structures(test)
                     testing_model.predict()
@@ -133,3 +136,26 @@ class ResponseHandler:
                 del testing_model
 
                 bar()
+
+    def get_files(self, files: list, amount: int) -> list:
+        """
+        Gets a random assortment of files from a list
+        Args:
+            files (list): a list of folders
+            amount (int): the amount of files wanted
+        Returns:
+            list: a random assortment of files
+        Raises:
+            ValueError: Raises a value Error
+        """
+        if len(files) < amount:
+            raise ValueError(f"Amount: {amount} < File: {len(files)}")
+        if len(files) == amount:
+            return files
+        else:
+            out = []
+            for _ in range(amount):
+                file = random.choice(files)
+                out.append(file)
+                files.remove(file)
+                del file
