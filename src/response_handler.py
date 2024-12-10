@@ -156,9 +156,5 @@ class ResponseHandler:
         if len(files) == amount:
             return files
         else:
-            out = []
-            for _ in range(amount):
-                file = random.choice(files)
-                out.append(file)
-                files.remove(file)
+            out = random.sample(files, amount)
             return out
