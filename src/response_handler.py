@@ -104,7 +104,7 @@ class ResponseHandler:
             print(f"\n\n{test}\n\n")
             testing_model.load_structures(test)
             e = testing_model.predict()
-            e_actual = db.get_energy(name)
+            e_actual = db.get_energy(name)[0]
             util.graph.add_data_point(e_actual, e * db.get_atom_count(name))
 
         del testing_model
