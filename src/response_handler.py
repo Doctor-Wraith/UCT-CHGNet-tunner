@@ -13,6 +13,7 @@ class ResponseHandler:
     UNLOAD = ["clear"]
     DB_RESET = ["--dbr"]
     CHECK = ["check"]
+    VASP = ["vasp", "--v"]
 
     def __init__(self) -> None:
         self.data = []
@@ -32,6 +33,8 @@ class ResponseHandler:
             db.clear_database()
         elif command in self.CHECK:
             self.check()
+        elif command in self.VASP:
+            self.to_json_from_vasp()
         else:
             print(f"The command {command} does not exists")
 
@@ -138,6 +141,21 @@ class ResponseHandler:
                 charge_net.load_structures(file)
                 charge_net.train()
 
+                bar()
+
+    def to_json_from_vasp(self):
+        data_training = db.search_outcar_file_train(True)
+        data_testing = db.search_outcar_file_train(False)
+        with alive_progress.alive_bar(len(data_testing)) as bar:
+            for data in data_training:
+                print(data)
+                charge_net.save_vasp_to_json(data[0])
+                bar()
+
+        with alive_progress.alive_bar(len(data_testing)) as bar:
+            for data in data_testing:
+                print(data)
+                charge_net.save_vasp_to_json(data[0], False)
                 bar()
 
     def get_files(self, files: list, amount: int) -> list:
