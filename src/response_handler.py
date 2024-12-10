@@ -1,7 +1,7 @@
-from . import data_extractor, util
+from src import data_extractor, util
 import alive_progress
-from .database import db
-from .chargnet import charge_net, CHGNET
+from src.database import db
+from src.chargnet import charge_net, CHGNET
 import glob
 import random
 
@@ -101,6 +101,7 @@ class ResponseHandler:
         testing_files = self.get_files(
             glob.glob(testing_model.data_folder +
                       "/json/test/*.json"), testing_amount)
+        cor = float(input("correction> "))
         for test in testing_files:
             name = test.replace("\\", "/").split("/")[-1].replace(".json", "")
             i += 1
@@ -108,7 +109,9 @@ class ResponseHandler:
             testing_model.load_structures(test)
             e = testing_model.predict()
             e_actual = db.get_energy(name)[0]
-            util.graph.add_data_point(e_actual, e * db.get_atom_count(name))
+            util.graph.add_data_point(
+                e_actual, e * db.get_atom_count(name) - cor
+                )
 
         del testing_model
         util.graph.show()
@@ -146,7 +149,7 @@ class ResponseHandler:
     def to_json_from_vasp(self):
         data_training = db.search_outcar_file_train(True)
         data_testing = db.search_outcar_file_train(False)
-        with alive_progress.alive_bar(len(data_testing)) as bar:
+        with alive_progress.alive_bar(len(data_training)) as bar:
             for data in data_training:
                 print(data)
                 charge_net.save_vasp_to_json(data[0])
