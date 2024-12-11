@@ -100,13 +100,18 @@ class ResponseHandler:
 
     def check(self):
         i = 0
-        testing_amount = int(util.get_input('testing amount> '))
+        while True:
+            try:
+                testing_amount = int(util.get_input('testing amount> '))
 
-        testing_model = CHGNET()
-        testing_files = util.get_files(
-            glob.glob(testing_model.data_folder +
-                      "/json/test/*.json"), testing_amount)
-        cor = float(input("correction> "))
+                testing_model = CHGNET()
+                testing_files = util.get_files(
+                    glob.glob(testing_model.data_folder +
+                              "/json/test/*.json"), testing_amount)
+            except ValueError:
+                continue
+            else:
+                break
         for test in testing_files:
             try:
                 name = test.replace("\\", "/").split("/")[-1].replace(
@@ -118,7 +123,7 @@ class ResponseHandler:
                 e = testing_model.predict()
                 e_actual = db.get_energy(name)[0]
                 util.graph.add_data_point(
-                    name, e_actual, e * db.get_atom_count(name) - cor
+                    name, e_actual, e * db.get_atom_count(name)
                     )
             except Exception:
                 pass
