@@ -36,21 +36,24 @@ class CHGNET:
         self.chgnet = None
 
     def load_structures(self, file) -> None:
-        dataset_dict = read_json(file)
+        try:
+            dataset_dict = read_json(file)
 
-        self.structures = [Structure.from_dict(struct) for struct in
-                           dataset_dict["structure"]]
-        self.energies = dataset_dict["energy_per_atom"]
-        self.forces = dataset_dict["force"]
-        self.stresses = dataset_dict.get("stress") if dataset_dict.get(
-            "stress") != [] else None
-        self.magmoms = dataset_dict.get("magmom") if dataset_dict.get(
-            "magmom") != [] else None
+            self.structures = [Structure.from_dict(struct) for struct in
+                               dataset_dict["structure"]]
+            self.energies = dataset_dict["energy_per_atom"]
+            self.forces = dataset_dict["force"]
+            self.stresses = dataset_dict.get("stress") if dataset_dict.get(
+                "stress") != [] else None
+            self.magmoms = dataset_dict.get("magmom") if dataset_dict.get(
+                "magmom") != [] else None
+        except Exception as e:
+            raise e
 
     def load_model(self):
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"./data/chgnet/models/bestE*")[0]
+                glob.glob(r"./data/chgnet/models/bestF*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
@@ -68,15 +71,6 @@ class CHGNET:
     def save_vasp_to_json(self, directory: str, train: bool = True) -> None:
         name = directory.replace("\\", "/").split("/")[-1]
         path = f'{self.data_folder}/json/train/{name}.json' if train else f'{self.data_folder}/json/test/{name}.json' # noqa
-        # if train:
-
-        #     parse_vasp_dir(directory,
-        #                    save_path=f'{self.data_folder}/json' +
-        #                    f'/train/{name}.json')
-        # else:
-        #     parse_vasp_dir(directory,
-        #                    save_path=f'{self.data_folder}/json' +
-        #                    f'/test/{name}.json')
         if not os.path.isfile(path):
             parse_vasp_dir(directory, save_path=path)
 
@@ -135,30 +129,4 @@ class CHGNET:
     # endregion
 
 
-# Test
 charge_net = CHGNET()
-# charge_net.load_model()
-
-# dirs = db.search_outcar_file_train(True)
-
-# with alive_progress.alive_bar(len(dirs)) as bar:
-#     for directory in dirs:
-#         chargnet.save_vasp_to_json(directory[0])
-#         bar()
-
-# index = 50
-# with alive_progress.alive_bar(len(glob.glob(charge_net.data_folder +
-#                                             "/json/*.json")[:index])) as bar:
-#     for file in glob.glob(charge_net.data_folder + "/json/*.json")[:index]:
-#         print(f"\n\n{file}\n")
-#         charge_net.load_structures(file)
-#         charge_net.train()
-
-#         bar()
-
-
-# print(glob.glob(charge_net.data_folder + "/json/*.json")[60])
-# charge_net.load_structures(glob.glob(charge_net.data_folder +
-#                                      "/json/*.json")[60])
-
-# charge_net.predict()

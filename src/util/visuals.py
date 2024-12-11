@@ -3,12 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 from pathlib import Path
+from .logger import logger
 
 
 @dataclass
 class GraphData:
     x: any
     y: any
+    name: str
 
 
 class Graph:
@@ -16,40 +18,52 @@ class Graph:
         self.data: list[GraphData] = []
         self.folder = "./data/graphs"
 
-    def add_data_point(self, x, y):
-        self.data.append(GraphData(x, y))
+    def add_data_point(self, name, x, y):
+        self.data.append(GraphData(x, y, name))
 
-    def show(self):
-        # plt.subplot(2, 1, 1)
-        min = np.inf
-        max = -np.inf
+    def show(self, labeled: bool = False, min: int = None, max: int = None):
+        """
+        Displays a graph of data points of DFT vs CHGNET
+
+        Args:
+            Labeled (bool): display the labels of points
+            min (int): minimum data point to be shown
+            max (int): maximin data point to be shown
+        """
+        minimum = np.inf
+        maximum = -np.inf
         x = []
         y = []
+        names = []
         for g in self.data:
-            if g.x > max:
-                max = g.x
+            if min is not None:
+                if g.x < min:
+                    continue
+            if max is not None:
+                if g.x > max:
+                    continue
 
-            if g.x < min:
-                min = g.x
+            if g.x > maximum:
+                maximum = g.x
+
+            if g.x < minimum:
+                minimum = g.x
 
             x.append(g.x)
             y.append(g.y)
-        min, max = min - 50, max + 50
-        plt.scatter(np.array(x), np.array(y), marker="o")
+            names.append(g.name)
+
+        minimum, maximum = minimum - 10, maximum + 10
+        ax = plt.subplot()
+        ax.scatter(np.array(x), np.array(y), marker="o")
+
+        if labeled:
+            for i, txt in enumerate(names):
+                ax.annotate(txt, (x[i], y[i]))
 
         plt.xlabel("CHGNET")
         plt.ylabel("DFT")
         plt.grid()
-
-        y = []
-        x = []
-        # plt.subplot(2, 1, 2)
-        # i = 0
-        # for data in self.data:
-        #     i += 1
-        #     y.append(data.y - data.x)
-        #     x.append(i)
-        # plt.plot(np.array(x), np.array(y), marker=".")
         save = (f"{self.folder}/{datetime.date.today()}/").replace(
                     "-", "_"
                 )
@@ -57,9 +71,10 @@ class Graph:
         save += f"{datetime.datetime.now()}.svg".replace("-", "_"
                                                          ).replace(":", "_")
         plt.plot(
-            np.array([min, max]),
-            np.array([min, max]),
+            np.array([minimum, maximum]),
+            np.array([minimum, maximum]),
             color="red", ls="--")
+        logger.info("Visuals", f"saving graph to {save}", False)
         plt.savefig(
             (save)
             )

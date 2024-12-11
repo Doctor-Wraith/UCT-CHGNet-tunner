@@ -27,8 +27,7 @@ class ResponseHandler:
         elif command in self.TRAIN:
             self.train()
         elif command in self.UNLOAD:
-            del self.data
-            self.data = []
+            self.clear()
         elif command in self.DB_RESET:
             db.clear_database()
         elif command in self.CHECK:
@@ -37,6 +36,10 @@ class ResponseHandler:
             self.to_json_from_vasp()
         else:
             print(f"The command {command} does not exists")
+
+    def clear(self):
+        del self.data
+        self.data = []
 
     def load_data(self):
         multiple = util.get_input(
@@ -89,32 +92,39 @@ class ResponseHandler:
                         bar()
                     else:
                         self.save(bar)
+                        self.clear()
         else:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 self.save(bar)
+                self.clear()
 
     def check(self):
         i = 0
         testing_amount = int(util.get_input('testing amount> '))
 
         testing_model = CHGNET()
-        testing_files = self.get_files(
+        testing_files = util.get_files(
             glob.glob(testing_model.data_folder +
-                      "/json/test/*.json"), testing_amount)
+                      "/json/train/*.json"), testing_amount)
         cor = float(input("correction> "))
         for test in testing_files:
-            name = test.replace("\\", "/").split("/")[-1].replace(".json", "")
-            i += 1
-            print(f"\n\n{test}\n\n")
-            testing_model.load_structures(test)
-            e = testing_model.predict()
-            e_actual = db.get_energy(name)[0]
-            util.graph.add_data_point(
-                e_actual, e * db.get_atom_count(name) - cor
-                )
+            try:
+                name = test.replace("\\", "/").split("/")[-1].replace(
+                    ".json", ""
+                    )
+                i += 1
+                print(f"\n\n{test}\n\n")
+                testing_model.load_structures(test)
+                e = testing_model.predict()
+                e_actual = db.get_energy(name)[0]
+                util.graph.add_data_point(
+                    name, e_actual, e * db.get_atom_count(name) - cor
+                    )
+            except Exception:
+                pass
 
         del testing_model
-        util.graph.show()
+        util.graph.show(max=-50)
 
     def train(self):
         train_amount = int(util.get_input("Number of training data> "))
@@ -138,7 +148,7 @@ class ResponseHandler:
             # TODO: Add logging here
             files = glob.glob(charge_net.data_folder +
                               "/json/train/*.json")
-            files = self.get_files(files, train_amount)
+            files = util.get_files(files, train_amount)
             for file in files:
                 print(f"\n\n{file}\n\n")
                 charge_net.load_structures(file)
@@ -160,22 +170,3 @@ class ResponseHandler:
                 print(data)
                 charge_net.save_vasp_to_json(data[0], False)
                 bar()
-
-    def get_files(self, files: list, amount: int) -> list:
-        """
-        Gets a random assortment of files from a list
-        Args:
-            files (list): a list of folders
-            amount (int): the amount of files wanted
-        Returns:
-            list: a random assortment of files
-        Raises:
-            ValueError: Raises a value Error
-        """
-        if len(files) < amount:
-            raise ValueError(f"Amount: {amount} < File: {len(files)}")
-        if len(files) == amount:
-            return files
-        else:
-            out = random.sample(files, amount)
-            return out
