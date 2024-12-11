@@ -53,7 +53,7 @@ class CHGNET:
     def load_model(self):
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"./data/chgnet/models/bestF*")[0]
+                glob.glob(r"./data/chgnet/models/bestE*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
