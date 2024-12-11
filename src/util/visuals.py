@@ -55,7 +55,18 @@ class Graph:
 
         minimum, maximum = minimum - 10, maximum + 10
         ax = plt.subplot()
-        ax.scatter(np.array(x), np.array(y), marker="o")
+
+        x = np.array(x)
+        y = np.array(y)
+
+        ax.scatter(x, y, marker="o")
+
+        # Line of best fit
+        a, b = np.polyfit(x, y, 1)
+        print()
+        print(a)
+        print(b)
+        plt.plot(x, a*x+b)
 
         if labeled:
             for i, txt in enumerate(names):
