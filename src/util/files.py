@@ -22,7 +22,7 @@ def scandir(dirname):
     return sub_folders
 
 
-def get_files(files: list, amount: int) -> list:
+def get_files(files: list, amount: int) -> list[str]:
     """
     Gets a random assortment of files from a list
 
