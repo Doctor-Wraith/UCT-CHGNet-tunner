@@ -105,7 +105,7 @@ class ResponseHandler:
         testing_model = CHGNET()
         testing_files = util.get_files(
             glob.glob(testing_model.data_folder +
-                      "/json/train/*.json"), testing_amount)
+                      "/json/test/*.json"), testing_amount)
         cor = float(input("correction> "))
         for test in testing_files:
             try:
