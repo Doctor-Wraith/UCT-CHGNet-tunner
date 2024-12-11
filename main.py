@@ -11,7 +11,9 @@ def create_folders():
         "./data/chgnet/json",
         "./data/chgnet/json/train",
         "./data/chgnet/json/test",
-        "./data/OUTCAR"
+        "./data/OUTCAR",
+        "./output",
+        "./output/graphs"
     ]
     logger.info("File Checker", "Checking if Folders exists",
                 False)

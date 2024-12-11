@@ -16,7 +16,7 @@ class GraphData:
 class Graph:
     def __init__(self):
         self.data: list[GraphData] = []
-        self.folder = "./data/graphs"
+        self.folder = "./output/graphs"
 
     def add_data_point(self, name, x, y):
         self.data.append(GraphData(x, y, name))

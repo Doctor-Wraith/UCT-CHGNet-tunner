@@ -53,7 +53,7 @@ class CHGNET:
     def load_model(self):
         try:
             self.chgnet = CHGNet.from_file(
-                glob.glob(r"./data/chgnet/models/bestE*")[0]
+                glob.glob(r"./data/models/bestE*")[0]
             )
         except Exception:
             self.chgnet = CHGNet.load()
@@ -112,7 +112,7 @@ class CHGNET:
             print_freq=100,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
-                           save_dir=self.data_folder + "/models",
+                           save_dir="./output/models",
                            save_test_result=True)
 
     # region Properties
@@ -124,7 +124,7 @@ class CHGNET:
     def data_folder(self, value: str) -> None:
         Path(value).mkdir(parents=True, exist_ok=True)
         Path(value + "/json").mkdir(parents=True, exist_ok=True)
-        Path(value + "/models").mkdir(parents=True, exist_ok=True)
+        # Path(value + "/models").mkdir(parents=True, exist_ok=True)
         self._data_folder = value
     # endregion
 
