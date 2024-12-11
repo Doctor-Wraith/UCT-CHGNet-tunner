@@ -103,9 +103,9 @@ class ResponseHandler:
         while True:
             try:
                 testing_model = CHGNET()
-                print(f"max number of files: \
-                      {len(glob.glob(testing_model.data_folder +
-                                     "/json/test/*.json"))} ")
+                print("max number of files: " +
+                      len(glob.glob(testing_model.data_folder +
+                                    "/json/test/*.json")))
                 testing_amount = int(util.get_input('testing amount> '))
 
                 testing_files = util.get_files(
