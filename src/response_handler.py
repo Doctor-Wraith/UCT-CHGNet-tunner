@@ -105,7 +105,7 @@ class ResponseHandler:
                 testing_model = CHGNET()
                 print("max number of files: " +
                       str(len(glob.glob(testing_model.data_folder +
-                                    "/json/test/*.json"))))
+                                        "/json/test/*.json"))))
                 testing_amount = int(util.get_input('testing amount> '))
 
                 testing_files = util.get_files(
