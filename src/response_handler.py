@@ -32,6 +32,7 @@ class ResponseHandler:
             self.clear()
         elif command in self.DB_RESET:
             db.clear_database()
+            self.clear_vasp()
         elif command in self.CHECK:
             self.check()
         elif command in self.VASP:
