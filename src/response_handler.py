@@ -191,6 +191,3 @@ class ResponseHandler:
                 print(data)
                 charge_net.save_vasp_to_json(data[0], False)
                 bar()
-
-r = ResponseHandler()
-r.clear_vasp()
