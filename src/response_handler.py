@@ -4,6 +4,7 @@ from src.database import db
 from src.chargnet import charge_net, CHGNET
 import glob
 import random
+import os
 
 
 class ResponseHandler:
@@ -36,9 +37,18 @@ class ResponseHandler:
         elif command in self.VASP:
             self.to_json_from_vasp()
         elif command in self.RANDO:
+            self.clear_vasp()
             db.randomize_tunning()
+            self.to_json_from_vasp()
         else:
             print(f"The command {command} does not exists")
+
+    def clear_vasp(self):
+        folders = glob.glob("./data/chgnet/json/*")
+        for folder in folders:
+            files = glob.glob(f"{folder}/*.json")
+            for file in files:
+                os.remove(file)
 
     def clear(self):
         del self.data
@@ -181,3 +191,6 @@ class ResponseHandler:
                 print(data)
                 charge_net.save_vasp_to_json(data[0], False)
                 bar()
+
+r = ResponseHandler()
+r.clear_vasp()

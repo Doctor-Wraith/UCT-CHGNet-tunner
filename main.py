@@ -28,22 +28,24 @@ def create_folders():
 
 
 def main():
-    logger.info("Start", "Starting Setup",
-                False)
-    create_folders()
+    # logger.info("Start", "Starting Setup",
+    #             False)
+    # create_folders()
     from src.response_handler import ResponseHandler
-    running = True
-    handler = ResponseHandler()
-    logger.info("Start", "Starting",
-                False)
-    while running:
-        command = util.get_input("Enter command> ").lower()
+    # running = True
+    # handler = ResponseHandler()
+    # logger.info("Start", "Starting",
+    #             False)
+    # while running:
+    #     command = util.get_input("Enter command> ").lower()
 
-        if command in ["q", "quit", "close", 'stop']:
-            logger.info("Program", "Stopping")
-            running = False
-        else:
-            handler.handler(command)
+    #     if command in ["q", "quit", "close", 'stop']:
+    #         logger.info("Program", "Stopping")
+    #         running = False
+    #     else:
+    #         handler.handler(command)
+    r = ResponseHandler()
+    r.clear_vasp()
 
 
 if __name__ == "__main__":
