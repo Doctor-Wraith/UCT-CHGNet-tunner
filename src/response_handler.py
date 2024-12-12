@@ -14,6 +14,7 @@ class ResponseHandler:
     DB_RESET = ["--dbr"]
     CHECK = ["check"]
     VASP = ["vasp", "--v"]
+    RANDO = ["random", '--r']
 
     def __init__(self) -> None:
         self.data = []
@@ -34,6 +35,8 @@ class ResponseHandler:
             self.check()
         elif command in self.VASP:
             self.to_json_from_vasp()
+        elif command in self.RANDO:
+            db.randomize_tunning()
         else:
             print(f"The command {command} does not exists")
 

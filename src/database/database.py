@@ -6,6 +6,7 @@ except ImportError:
     import sqlstatements
     import data_classes
 from pathlib import Path
+import random
 
 
 class SqliteDataBase:
@@ -151,6 +152,19 @@ class SqliteDataBase:
         count = cursor.fetchone()[0]
         print(count)
         return count
+
+    # endregion
+    # region Update
+    def randomize_tunning(self, prob_train: int = 80, prob_test: int = 20):
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.RANDOMIZE_TRAINING.get("Get_rows"))
+        rows = cursor.fetchall()
+
+        for row in rows:
+            cursor.execute(sqlstatements.RANDOMIZE_TRAINING.get("randomize"),
+                           (random.choices([True, False],
+                                           [prob_train, prob_test])[0],
+                            row[0]))
 
     # endregion
 

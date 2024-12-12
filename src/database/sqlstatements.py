@@ -80,3 +80,8 @@ SEARCH_OUTCAR_TRAIN_PATH = """
 SEARCH_OUTCAR_ENERGY = """
         SELECT energy, outcar_path from tuning WHERE training = ?
 """
+
+RANDOMIZE_TRAINING = {
+    "Get_rows": "Select tuning_id from tuning",
+    "randomize": "UPDATE tuning SET training = ? WHERE tuning_id = ?"
+}
