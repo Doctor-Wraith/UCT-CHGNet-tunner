@@ -37,7 +37,7 @@ def main():
     logger.info("Start", "Starting",
                 False)
     while running:
-        command = util.get_input("Enter command> ").lower()
+        command = util.get_input("Enter command> ").lower().strip()
 
         if command in ["q", "quit", "close", 'stop']:
             logger.info("Program", "Stopping")
