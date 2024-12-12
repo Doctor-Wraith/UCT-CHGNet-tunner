@@ -85,3 +85,5 @@ RANDOMIZE_TRAINING = {
     "Get_rows": "Select tuning_id from tuning",
     "randomize": "UPDATE tuning SET training = ? WHERE tuning_id = ?"
 }
+
+SEARCH_ALL_OUTCAR = "SELECT outcar_path FROM tuning"

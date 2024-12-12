@@ -96,14 +96,6 @@ class SqliteDataBase:
     # endregion
 
     # region SEARCHES
-    def clear_database(self) -> None:
-        cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE tuning")
-        cursor.execute("DROP TABLE atom")
-        cursor.execute("DROP TABLE position")
-        cursor.execute("DROP TABLE force")
-        self.create_tables()
-
     def search_atom_id(self, atom_name: str) -> str:
         cursor = self.connection.cursor()
         cursor.execute(sqlstatements.SEARCH_IDS.get("atom"), (atom_name,))
@@ -153,6 +145,11 @@ class SqliteDataBase:
         print(count)
         return count
 
+    def get_all_outcar(self):
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_ALL_OUTCAR)
+        return cursor.fetchall()
+
     # endregion
     # region Update
     def randomize_tunning(self, prob_train: int = 80, prob_test: int = 20):
@@ -166,6 +163,15 @@ class SqliteDataBase:
                                            [prob_train, prob_test])[0],
                             row[0]))
 
+    # endregion
+    # region Delete
+    def clear_database(self) -> None:
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE tuning")
+        cursor.execute("DROP TABLE atom")
+        cursor.execute("DROP TABLE position")
+        cursor.execute("DROP TABLE force")
+        self.create_tables()
     # endregion
 
 
