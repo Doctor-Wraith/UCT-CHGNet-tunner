@@ -5,6 +5,7 @@ from src.chargnet import charge_net, CHGNET
 import glob
 import random
 import os
+from .surface_update import update_db
 
 
 class ResponseHandler:
@@ -67,6 +68,7 @@ class ResponseHandler:
             with alive_progress.alive_bar(len(folders)) as bar:
                 for folder in folders:
                     try:
+                        # TODO: Add logging here
                         print(folder)
                         outcar = data_extractor.Data()
                         outcar.folder = folder
@@ -111,6 +113,8 @@ class ResponseHandler:
             with alive_progress.alive_bar(len(self.data)) as bar:
                 self.save(bar)
                 self.clear()
+
+        update_db()
 
     def check(self):
         i = 0

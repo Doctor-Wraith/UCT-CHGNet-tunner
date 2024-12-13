@@ -34,13 +34,6 @@ class Data:
                 break
 
     def check_surface(self, atom_name: str) -> tuple[bool, str | None]:
-        # names = self.folder.split("/")
-        # for name in names:
-        #     for i in name.split("_"):
-        #         element = "".join(re.findall("([a-zA-Z])", i))
-        #         if element == atom_name:
-        #             print(element)
-        #             return (True, element)
         if atom_name in VALID_SURFACES:
             return (True, atom_name)
 
@@ -65,7 +58,6 @@ class Data:
         self.atoms = []
         for atom, number in zip(atoms, number_atoms):
             surface = self.check_surface(atom)
-            print(surface)
             if surface[0]:
                 self.atoms.append(util.Atom(surface[1], int(number),
                                             True, None, None))
