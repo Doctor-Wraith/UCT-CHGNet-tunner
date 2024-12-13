@@ -6,13 +6,15 @@ except ImportError:
     import util
     from database import data_classes, db
 
-import re
 import uuid
 import random
 import os
 import shutil
 from pathlib import Path
 # endregion
+
+
+VALID_SURFACES = ["Pt"]
 
 
 class Data:
@@ -32,12 +34,15 @@ class Data:
                 break
 
     def check_surface(self, atom_name: str) -> tuple[bool, str | None]:
-        names = self.folder.split("/")
-        for name in names:
-            for i in name.split("_"):
-                element = "".join(re.findall("([a-zA-Z])", i))
-                if element == atom_name:
-                    return (True, i)
+        # names = self.folder.split("/")
+        # for name in names:
+        #     for i in name.split("_"):
+        #         element = "".join(re.findall("([a-zA-Z])", i))
+        #         if element == atom_name:
+        #             print(element)
+        #             return (True, element)
+        if atom_name in VALID_SURFACES:
+            return (True, atom_name)
 
         return (False, None)
 
@@ -60,6 +65,7 @@ class Data:
         self.atoms = []
         for atom, number in zip(atoms, number_atoms):
             surface = self.check_surface(atom)
+            print(surface)
             if surface[0]:
                 self.atoms.append(util.Atom(surface[1], int(number),
                                             True, None, None))
@@ -203,29 +209,6 @@ class Data:
             "folder": self.folder
         }
         return out
-
-    # endregion
-    # region Calculations
-    def calc_distance(self) -> dict:
-        positions = []
-        zip_positions = []
-        for a in [atom for atom in self.atoms]:
-            for loc in a.locations:
-                positions.append([a.name, loc])
-
-        n = len(positions)
-        for i in range(n-1):
-            for j in range(i+1, n):
-                zip_positions.append([positions[i], positions[j]])
-
-        distances = {}
-        for k in zip_positions:
-            atom_1, atom_2 = k
-            distances[f"{atom_1[0]}_{atom_2[0]}"] = util.distance.Vector3D(
-                atom_1[1], atom_2[2]
-            )
-
-        return distances
 
     # endregion
 

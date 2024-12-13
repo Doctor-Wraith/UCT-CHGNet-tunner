@@ -96,14 +96,6 @@ class SqliteDataBase:
     # endregion
 
     # region SEARCHES
-    def clear_database(self) -> None:
-        cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE tuning")
-        cursor.execute("DROP TABLE atom")
-        cursor.execute("DROP TABLE position")
-        cursor.execute("DROP TABLE force")
-        self.create_tables()
-
     def search_atom_id(self, atom_name: str) -> str:
         cursor = self.connection.cursor()
         cursor.execute(sqlstatements.SEARCH_IDS.get("atom"), (atom_name,))
@@ -111,6 +103,27 @@ class SqliteDataBase:
         result = cursor.fetchone()
 
         return result
+
+    def search_incomplete_surface_tune(self, surface: str) -> list[str]:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_TUNE_INCOMPLETE, (surface,))
+
+        result = cursor.fetchall()
+        return result
+
+    def search_pos_atom_tune(self, tune_id: str, atom_id: str) -> list[float]:
+        cursor = self.connection.cursor()
+        cursor.execute(
+            sqlstatements.SEARCH_POS_ATOM_TUNE_z,
+            (atom_id, tune_id))
+
+        return cursor.fetchall()
+
+    def search_outcar_from_id(self, tune_id: str) -> str:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.FILE_FROM_ID, (tune_id, ))
+
+        return cursor.fetchone()[0]
 
     def search_outcar_file(self, path: str) -> str:
         cursor = self.connection.cursor()
@@ -153,6 +166,11 @@ class SqliteDataBase:
         print(count)
         return count
 
+    def get_all_outcar(self):
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_ALL_OUTCAR)
+        return cursor.fetchall()
+
     # endregion
     # region Update
     def randomize_tunning(self, prob_train: int = 80, prob_test: int = 20):
@@ -166,6 +184,27 @@ class SqliteDataBase:
                                            [prob_train, prob_test])[0],
                             row[0]))
 
+    def update_surface(self, old_surface_id: str, tune_id: str,
+                       new_surface_id: str) -> None:
+        cursor = self.connection.cursor()
+        # tune
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("tune"), (new_surface_id, tune_id)) # noqa
+        # position
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("position"), (new_surface_id, tune_id, old_surface_id)) # noqa
+        # force
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("force"), (new_surface_id, tune_id, old_surface_id)) # noqa
+
+        self.connection.commit()
+
+    # endregion
+    # region Delete
+    def clear_database(self) -> None:
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE tuning")
+        cursor.execute("DROP TABLE atom")
+        cursor.execute("DROP TABLE position")
+        cursor.execute("DROP TABLE force")
+        self.create_tables()
     # endregion
 
 
