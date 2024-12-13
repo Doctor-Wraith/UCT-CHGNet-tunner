@@ -6,7 +6,6 @@ except ImportError:
     import util
     from database import data_classes, db
 
-import re
 import uuid
 import random
 import os
@@ -16,6 +15,7 @@ from pathlib import Path
 
 
 VALID_SURFACES = ["Pt"]
+
 
 class Data:
     def __init__(self) -> None:

@@ -44,7 +44,7 @@ def type_of_surface(positions: dict, surface_type: str,
                     h_max: int = 10, k_max: int = 10, l_max: int = 10) -> str:
     distance = positions[2] - positions[1]
     found = False
-    for l in range(l_max+1):
+    for l in range(l_max+1): # noqa
         for k in range(k_max+1):
             for h in range(h_max+1):
                 try:
@@ -73,35 +73,18 @@ def type_of_surface(positions: dict, surface_type: str,
     return (h, k, l)
 
 
-# a, d = get_posses("Pt")
-# l = []
-# with open("test.txt", "w") as output:
-#     for b, g in zip(a, d):
-#         s = f"Pt{''.join(type_of_surface(b, 'Pt'))}"
-#         l.append(s)
-#         # print(db.search_outcar_from_id(g[0]))
-#         # print(s)
-#         k = f"{db.search_outcar_from_id(g[0])}: \t\t\t {s}"
-#         print(k)
-#         output.write(k + "\n")
-
-# # print(l)
 def update_db():
     posses, id_s = get_posses("Pt")
     for pos, id_ in zip(posses, id_s):
         tune_id = id_[0]
         Pt_id = id_[1]
 
-        # print(tune_id)
-        # print(Pt_id)
         Pt_new = f"Pt{''.join(type_of_surface(pos, 'Pt'))}"
-        # print(Pt_new)
 
-    # Pt_new_id = db.search_atom_id(Pt_new) if db.search_atom_id(Pt_new) is not None else uuid.uuid4().hex
         if db.search_atom_id(Pt_new) is None:
             Pt_new_id = uuid.uuid4().hex
             db.add_atom(Atom(Pt_new_id, Pt_new))
-            
+
             db.update_surface(Pt_id, tune_id, Pt_new_id)
         else:
             Pt_new_id = db.search_atom_id(Pt_new)[0]
