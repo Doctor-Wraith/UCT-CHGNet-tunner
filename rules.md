@@ -20,3 +20,17 @@ try find out if any of the atoms within centre of atoms:
 
 # other:
 get relative distance of adsorbates
+
+sqrt(h^2 + k^2 + l^2) = (lattice para/d)^2
+
+# distamces
+111:
+- 
+
+100:
+- 
+
+
+lattice constant
+
+0 <= h, k, l <= 10

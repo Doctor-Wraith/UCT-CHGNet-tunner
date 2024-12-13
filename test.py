@@ -1,9 +1,11 @@
+import ase.dependencies
 from ase.io import read, write # noqa
 from ase.visualize import view # noqa
 from ase import Atom, Atoms # noqa
 
 from src.database import db # noqa
 import time
+import ase
 
 
 def get_cell_size(a: Atoms) -> list:
@@ -16,24 +18,11 @@ def get_cell_size(a: Atoms) -> list:
                 k.replace("[", "").replace("]", "").split("x"))))
 
 
-def test():
-    for i in db.get_all_outcar():
-        path: Atoms = read(i[0] + "/CONTCAR")
-        get_cell_size(path)
-
-
-def test_2():
-    for i in db.get_all_outcar():
-        path: Atoms = read(i[0] + "/OUTCAR")
-        get_cell_size(path)
-
-
-start = time.time()
-test()
-end = time.time()
-print(f'Time taken: {end - start:.6f} seconds')
-start = time.time()
-test_2()
-end = time.time()
-print(f'Time taken: {end - start:.6f} seconds')
-
+# start = time.time()
+# test()
+# end = time.time()
+# print(f'Time taken: {end - start:.6f} seconds')
+# start = time.time()
+# test_2()
+# end = time.time()
+# print(f'Time taken: {end - start:.6f} seconds')
