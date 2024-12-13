@@ -184,6 +184,18 @@ class SqliteDataBase:
                                            [prob_train, prob_test])[0],
                             row[0]))
 
+    def update_surface(self, old_surface_id: str, tune_id: str,
+                       new_surface_id: str) -> None:
+        cursor = self.connection.cursor()
+        # tune
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("tune"), (new_surface_id, tune_id)) # noqa
+        # position
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("position"), (new_surface_id, tune_id, old_surface_id)) # noqa
+        # force
+        cursor.execute(sqlstatements.UPDATE_SURFACE.get("force"), (new_surface_id, tune_id, old_surface_id)) # noqa
+
+        self.connection.commit()
+
     # endregion
     # region Delete
     def clear_database(self) -> None:

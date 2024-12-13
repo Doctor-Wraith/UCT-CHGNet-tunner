@@ -1,7 +1,11 @@
 try:
     from .database import db
+    from .database.data_classes import Atom
 except ImportError:
     from database import db
+    from database.data_classes import Atom
+import numpy as np
+import uuid
 
 
 LATTICE = {
@@ -14,7 +18,6 @@ def get_posses(surface: str) -> dict:
     out = []
     for tune in tunes:
         layers_all: dict = {}
-        print(tune)
         posses = db.search_pos_atom_tune(tune[0], tune[1])
         for pos in posses:
             if layers_all == {}:
@@ -28,17 +31,12 @@ def get_posses(surface: str) -> dict:
 
                 if not found:
                     layers_all[i+1] = [pos[2]]
-
-        print(layers_all)
         layers_avg = {}
         for i, j in layers_all.items():
             layers_avg[i] = sum(j)/len(j)
             # layers_avg[i] = j[0]
 
-        print(layers_avg)
         out.append(layers_avg)
-
-        print()
     return out, tunes
 
 
@@ -62,19 +60,53 @@ def type_of_surface(positions: dict, surface_type: str,
             break
     if not found:
         return (False, eq, distance)
-    return ((h, k, l), eq, distance)
+    else:
+        min_value = np.inf
+        if h < min_value and h != 0:
+            min_value = h
+        if k < min_value and k != 0:
+            min_value = k
+        if l < min_value and l != 0:
+            min_value = l
+
+        h, k, l = str(int(h/min_value)), str(int(k/min_value)), str(int(l/min_value)) # noqa
+    return (h, k, l)
 
 
-a, d = get_posses("Pt")
-l = []
-with open("test.txt", "w") as output:
-    for b, g in zip(a, d):
-        s = type_of_surface(b, "Pt")
-        l.append(s)
-        # print(db.search_outcar_from_id(g[0]))
-        # print(s)
-        k = f"{db.search_outcar_from_id(g[0])}: \t\t\t {s}"
-        print(k)
-        output.write(k + "\n")
+# a, d = get_posses("Pt")
+# l = []
+# with open("test.txt", "w") as output:
+#     for b, g in zip(a, d):
+#         s = f"Pt{''.join(type_of_surface(b, 'Pt'))}"
+#         l.append(s)
+#         # print(db.search_outcar_from_id(g[0]))
+#         # print(s)
+#         k = f"{db.search_outcar_from_id(g[0])}: \t\t\t {s}"
+#         print(k)
+#         output.write(k + "\n")
 
-# print(l)
+# # print(l)
+def update_db():
+    posses, id_s = get_posses("Pt")
+    for pos, id_ in zip(posses, id_s):
+        tune_id = id_[0]
+        Pt_id = id_[1]
+
+        # print(tune_id)
+        # print(Pt_id)
+        Pt_new = f"Pt{''.join(type_of_surface(pos, 'Pt'))}"
+        # print(Pt_new)
+
+    # Pt_new_id = db.search_atom_id(Pt_new) if db.search_atom_id(Pt_new) is not None else uuid.uuid4().hex
+        if db.search_atom_id(Pt_new) is None:
+            Pt_new_id = uuid.uuid4().hex
+            db.add_atom(Atom(Pt_new_id, Pt_new))
+            
+            db.update_surface(Pt_id, tune_id, Pt_new_id)
+        else:
+            Pt_new_id = db.search_atom_id(Pt_new)[0]
+            db.update_surface(Pt_id, tune_id, Pt_new_id)
+        print(Pt_new_id)
+
+
+update_db()
