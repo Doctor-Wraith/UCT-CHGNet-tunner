@@ -87,3 +87,9 @@ RANDOMIZE_TRAINING = {
 }
 
 SEARCH_ALL_OUTCAR = "SELECT outcar_path FROM tuning"
+
+SEARCH_TUNE_INCOMPLETE = "SELECT tuning.tuning_id, atom.atom_id FROM tuning, atom WHERE atom.atom_name = ? AND tuning.surface_id = atom.atom_id" # noqa
+
+SEARCH_POS_ATOM_TUNE_z = "SELECT x, y, z FROM position WHERE atom_id = ? AND tuning_id = ? ORDER BY z" # noqa
+
+FILE_FROM_ID = "SELECT outcar_path FROM tuning WHERE tuning_id = ?"

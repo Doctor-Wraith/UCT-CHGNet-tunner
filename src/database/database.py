@@ -104,6 +104,27 @@ class SqliteDataBase:
 
         return result
 
+    def search_incomplete_surface_tune(self, surface: str) -> list[str]:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_TUNE_INCOMPLETE, (surface,))
+
+        result = cursor.fetchall()
+        return result
+
+    def search_pos_atom_tune(self, tune_id: str, atom_id: str) -> list[float]:
+        cursor = self.connection.cursor()
+        cursor.execute(
+            sqlstatements.SEARCH_POS_ATOM_TUNE_z,
+            (atom_id, tune_id))
+
+        return cursor.fetchall()
+
+    def search_outcar_from_id(self, tune_id: str) -> str:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.FILE_FROM_ID, (tune_id, ))
+
+        return cursor.fetchone()[0]
+
     def search_outcar_file(self, path: str) -> str:
         cursor = self.connection.cursor()
         cursor.execute(sqlstatements.SEARCH_OUTCAR_PATH, (path,))

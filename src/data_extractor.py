@@ -37,7 +37,7 @@ class Data:
             for i in name.split("_"):
                 element = "".join(re.findall("([a-zA-Z])", i))
                 if element == atom_name:
-                    return (True, i)
+                    return (True, element)
 
         return (False, None)
 
@@ -203,29 +203,6 @@ class Data:
             "folder": self.folder
         }
         return out
-
-    # endregion
-    # region Calculations
-    def calc_distance(self) -> dict:
-        positions = []
-        zip_positions = []
-        for a in [atom for atom in self.atoms]:
-            for loc in a.locations:
-                positions.append([a.name, loc])
-
-        n = len(positions)
-        for i in range(n-1):
-            for j in range(i+1, n):
-                zip_positions.append([positions[i], positions[j]])
-
-        distances = {}
-        for k in zip_positions:
-            atom_1, atom_2 = k
-            distances[f"{atom_1[0]}_{atom_2[0]}"] = util.distance.Vector3D(
-                atom_1[1], atom_2[2]
-            )
-
-        return distances
 
     # endregion
 

@@ -7,3 +7,4 @@ logs.log
 data\chgnet\models
 data\chgnet\models\test_result.json
 output/
+test.*
