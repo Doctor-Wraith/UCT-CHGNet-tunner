@@ -1,9 +1,31 @@
+# region Imports
 from dataclasses import dataclass
-import matplotlib.pyplot as plt
-import numpy as np
+import os
+
+try:
+    from .logger import logger
+except ImportError:
+    from logger import logger
+
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    logger.error("visuals", "matplotlib module not found")
+    logger.info("visuals", "installing matplotlib")
+    os.system("pip install matplotlib")
+    import matplotlib.pyplot as plt
+
+try:
+    import numpy as np
+except ImportError:
+    logger.error("visuals", "numpy module not found")
+    logger.info("visuals", "installing numpy")
+    os.system("pip install numpy")
+    import numpy as np
+
 import datetime
 from pathlib import Path
-from .logger import logger
+# endregion
 
 
 @dataclass

@@ -1,11 +1,18 @@
 from src import data_extractor, util
-import alive_progress
+from .util import logger
 from src.database import db
 from src.chargnet import charge_net, CHGNET
 import glob
 import random
 import os
 from .surface_update import update_db
+try:
+    import alive_progress
+except ImportError:
+    logger.error("response", "alive_progress module not found")
+    logger.info("response", "installing alive_progress")
+    os.system("pip install alive_progress")
+    import alive_progress
 
 
 class ResponseHandler:
