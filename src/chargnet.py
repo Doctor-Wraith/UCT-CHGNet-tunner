@@ -145,7 +145,7 @@ class CHGNET:
             optimizer="Adam",
             scheduler="CosLR",
             criterion="MSE",
-            epochs=10,
+            epochs=50,
             learning_rate=5e-4,
             use_device="cpu",
             print_freq=100,
