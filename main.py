@@ -1,6 +1,7 @@
 from pathlib import Path
 from src.util import logger
 from src import util
+import os
 
 
 def create_folders():
@@ -34,6 +35,7 @@ def main():
     from src.response_handler import ResponseHandler
     running = True
     handler = ResponseHandler()
+    os.system("clear")
     logger.info("Start", "Starting",
                 False)
     while running:
