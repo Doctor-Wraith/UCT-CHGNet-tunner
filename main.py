@@ -33,7 +33,8 @@ def main():
                 False)
     create_folders()
     from src.response_handler import ResponseHandler
-    os.system("clear")
+    # Make sure that the console clears no matter which OS is used
+    os.system("clear") | os.system("cls")
     running = True
     handler = ResponseHandler()
     logger.info("Start", "Starting",
