@@ -153,7 +153,7 @@ class ResponseHandler:
         util.graph.show(max=-50)
 
     def train(self):
-        train_amount = int(util.get_input("Number of training data> "))
+        train_amount = int(util.get_input("Number of models to be made> "))
 
         data_training = db.search_outcar_file_train(True)
         num = random.randint(0, len(data_training) - 1 - train_amount)

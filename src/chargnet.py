@@ -16,6 +16,7 @@ except ImportError:
     from .database import db # noqa
 import random
 import os
+import datetime
 
 # endregion
 
@@ -112,7 +113,7 @@ class CHGNET:
             print_freq=100,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
-                           save_dir="./output/models",
+                           save_dir=f"./output/models/{datetime.datetime.now()}", # noqa
                            save_test_result=True)
 
     # region Properties
@@ -124,7 +125,6 @@ class CHGNET:
     def data_folder(self, value: str) -> None:
         Path(value).mkdir(parents=True, exist_ok=True)
         Path(value + "/json").mkdir(parents=True, exist_ok=True)
-        # Path(value + "/models").mkdir(parents=True, exist_ok=True)
         self._data_folder = value
     # endregion
 
