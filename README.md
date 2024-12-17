@@ -17,3 +17,9 @@ Depending on operating system:
     ```
     .\run.ps1
     ```
+
+# Running
+## The detection of surfaces
+The program will detect The following elements as surfaces:
+- Pt
+- Fe
