@@ -39,9 +39,17 @@ class Graph:
     def __init__(self):
         self.data: list[GraphData] = []
         self.folder = "./output/graphs"
+        self.name = "unnamed"
 
     def add_data_point(self, name, x, y):
         self.data.append(GraphData(x, y, name))
+
+    def reset(self):
+        self.data: list[GraphData] = []
+        self.name = "unnamed"
+
+    def set_model_name(self, name: str):
+        self.name = name
 
     def show(self, labeled: bool = False, min: int = None, max: int = None):
         """
@@ -77,7 +85,6 @@ class Graph:
 
         minimum, maximum = minimum - 10, maximum + 10
         ax = plt.subplot()
-
         x = np.array(x)
         y = np.array(y)
 
@@ -101,13 +108,13 @@ class Graph:
                     "-", "_"
                 )
         Path(save).mkdir(parents=True, exist_ok=True)
-        save += f"{datetime.datetime.now()}.svg".replace("-", "_"
-                                                         ).replace(":", "_")
+        save += f"{self.name}.svg"
         plt.plot(
             np.array([minimum, maximum]),
             np.array([minimum, maximum]),
             color="red", ls="--")
         logger.info("Visuals", f"saving graph to {save}", False)
+        plt.title(self.name)
         plt.savefig(
             (save)
             )

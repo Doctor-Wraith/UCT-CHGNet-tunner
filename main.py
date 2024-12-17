@@ -29,11 +29,11 @@ def create_folders():
 
 
 def main():
-    os.system("clear")
     logger.info("Start", "Starting Setup",
                 False)
     create_folders()
     from src.response_handler import ResponseHandler
+    os.system("clear")
     running = True
     handler = ResponseHandler()
     logger.info("Start", "Starting",

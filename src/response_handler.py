@@ -34,6 +34,7 @@ class ResponseHandler:
             self.load_data()
         elif command in self.SAVE_LOCAL:
             self.save_local()
+            self.to_json_from_vasp()
         elif command in self.TRAIN:
             self.train()
         elif command in self.UNLOAD:
@@ -135,29 +136,36 @@ class ResponseHandler:
 
                 testing_files = util.get_files(
                     glob.glob(testing_model.data_folder +
-                              "/json/train/*.json"), testing_amount)
+                              "/json/test/*.json"), testing_amount)
             except ValueError:
                 continue
             else:
                 break
-        for test in testing_files:
-            try:
-                name = test.replace("\\", "/").split("/")[-1].replace(
-                    ".json", ""
-                    )
-                i += 1
-                print(f"\n\n{test}\n\n")
-                testing_model.load_structures(test)
-                e = testing_model.predict()
-                e_actual = db.get_energy(name)[0]
-                util.graph.add_data_point(
-                    name, e_actual, e * db.get_atom_count(name)
-                    )
-            except Exception:
-                pass
 
+        models = glob.glob("./output/models/*")
+        print(models)
+        for model in models:
+            testing_model.load_model(model.replace("\\", "/"))
+            util.graph.set_model_name(model.replace("\\", "/").split("/")[-1])
+            for test in testing_files:
+                try:
+                    name = test.replace("\\", "/").split("/")[-1].replace(
+                        ".json", ""
+                        )
+                    i += 1
+                    print(f"\n\n{test}\n\n")
+                    testing_model.load_structures(test)
+                    e = testing_model.predict()
+                    e_actual = db.get_energy(name)[0]
+                    util.graph.add_data_point(
+                        name, e_actual, e * db.get_atom_count(name)
+                        )
+                except Exception:
+                    pass
+
+            util.graph.show(max=-50)
+            util.graph.reset()
         del testing_model
-        util.graph.show(max=-50)
 
     def train(self):
         train_amount = int(util.get_input("Number of models to be made> "))

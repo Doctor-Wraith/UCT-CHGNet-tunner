@@ -78,16 +78,27 @@ class CHGNET:
         except Exception as e:
             raise e
 
-    def load_model(self):
-        try:
-            self.chgnet = CHGNet.from_file(
-                glob.glob(r"./data/models/bestE*")[0]
-            )
-        except Exception:
-            self.chgnet = CHGNet.load()
+    def load_model(self, path: str = None):
+        if path is None:
+            try:
+                self.chgnet = CHGNet.from_file(
+                    glob.glob(r"./data/models/bestE*")[0]
+                )
+            except Exception:
+                logger.error("chgnet", "could not load model")
+                logger.info("chgnet", "loading default model")
+                self.chgnet = CHGNet.load()
+        else:
+            try:
+                self.chgnet = CHGNet.from_file(
+                    glob.glob(path + "/BestE*")[0]
+                )
+            except Exception:
+                logger.error("chgnet", "could not load model")
+                logger.info("chgnet", "loading default model")
+                self.chgnet = CHGNet.load()
 
     def predict(self):
-        self.load_model()
         struct = random.choice(self.structures)
         prediction = self.chgnet.predict_structure(struct)
         for key, unit in [
@@ -140,7 +151,7 @@ class CHGNET:
             print_freq=100,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
-                           save_dir=f"./output/models/{datetime.datetime.now()}", # noqa
+                           save_dir=f"./output/models/{str(datetime.datetime.now()).replace(":", "_").replace("-", "_")}", # noqa
                            save_test_result=True)
 
     # region Properties
