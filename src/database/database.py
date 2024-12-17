@@ -171,6 +171,24 @@ class SqliteDataBase:
         cursor.execute(sqlstatements.SEARCH_ALL_OUTCAR)
         return cursor.fetchall()
 
+    def get_tune_from_surface(self, surface: str) -> list[str]:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_SURFACE, (surface, ))
+        tune_id = cursor.fetchall()
+
+        return tune_id
+
+    def get_atoms(self, tune_id: str) -> list[str]:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_ATOMS, (tune_id, ))
+        return cursor.fetchone()[0]
+
+    def get_atom_positions(self, tune_id, atom_id) -> list[str]:
+        cursor = self.connection.cursor()
+        cursor.execute(sqlstatements.SEARCH_ATOM_POSITIONS, (tune_id, atom_id))
+
+        return cursor.fetchall()
+
     # endregion
     # region Update
     def randomize_tunning(self, prob_train: int = 80, prob_test: int = 20):

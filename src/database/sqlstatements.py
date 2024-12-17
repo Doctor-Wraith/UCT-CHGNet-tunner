@@ -99,3 +99,7 @@ UPDATE_SURFACE = {
     "position": "UPDATE position SET atom_id = ? WHERE tuning_id = ? AND atom_id = ?", # noqa
     "force": "UPDATE force SET atom_id = ? WHERE tuning_id = ? AND atom_id = ?"
 }
+
+SEARCH_ATOMS = "SELECT surface_id, adsorbate_1_id, adsorbate_2_id, adsorbate_3_id FROM tuning WHERE tuning_id = ?" # noqa
+SEARCH_SURFACE = "SELECT tuning.tuning_id FROM tuning, atom WHERE tuning.surface_id = atom.atom_id AND atom.atom_name = ?" # noqa
+SEARCH_ATOM_POSITIONS = "SELECT x, y, z FROM position WHERE tuning_id = ? AND atom_id = ?" # noqa
