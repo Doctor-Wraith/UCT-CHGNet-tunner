@@ -151,7 +151,7 @@ class CHGNET:
             print_freq=100,
         )
         self.trainer.train(train_loader, val_loader, test_loader,
-                           save_dir=f"./output/models/{str(datetime.datetime.now()).replace(":", "_").replace("-", "_")}", # noqa
+                           save_dir=f"./output/models/{str(datetime.datetime.now()).replace(':', '_').replace('-', '_')}", # noqa
                            save_test_result=True)
 
     # region Properties
