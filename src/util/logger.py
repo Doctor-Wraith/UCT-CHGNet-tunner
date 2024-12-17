@@ -14,7 +14,7 @@ class Logger:
             print(line)
 
     def warn(self, unit: str, msg: str, silent: bool = True):
-        now = datetime.datetime.now().time()
+        now = datetime.datetime.now()
         line = f"{now.strftime('%d/%m/%Y %H:%M:%S')}-[{unit}/WARN]:\t{msg}" # noqa
         with open(self.save_path, "a") as file:
             file.write(line + "\n")
@@ -22,7 +22,7 @@ class Logger:
             print(line)
 
     def error(self, unit: str, msg: str, silent: bool = True):
-        now = datetime.datetime.now().time()
+        now = datetime.datetime.now()
         line = f"{now.strftime('%d/%m/%Y %H:%M:%S')}-[{unit}/ERROR]:\t{msg}" # noqa
         with open(self.save_path, "a") as file:
             file.write(line + "\n")
