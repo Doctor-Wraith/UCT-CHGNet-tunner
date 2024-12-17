@@ -10,7 +10,8 @@ import alive_progress
 
 
 LATTICE = {
-    "Pt": 3.9242
+    "Pt": 3.9242,
+    "Fe": 2.8665
 }
 
 
@@ -75,21 +76,22 @@ def type_of_surface(positions: dict, surface_type: str,
 
 
 def update_db():
-    posses, id_s = get_posses("Pt")
-    with alive_progress.alive_bar(len(posses)) as bar:
-        for pos, id_ in zip(posses, id_s):
-            tune_id = id_[0]
-            Pt_id = id_[1]
+    for key in LATTICE.keys():
+        posses, id_s = get_posses(key)
+        with alive_progress.alive_bar(len(posses)) as bar:
+            for pos, id_ in zip(posses, id_s):
+                tune_id = id_[0]
+                element_id = id_[1]
 
-            Pt_new = f"Pt{''.join(type_of_surface(pos, 'Pt'))}"
+                element_new = f"Pt{''.join(type_of_surface(pos, 'Pt'))}"
 
-            if db.search_atom_id(Pt_new) is None:
-                Pt_new_id = uuid.uuid4().hex
-                db.add_atom(Atom(Pt_new_id, Pt_new))
+                if db.search_atom_id(element_new) is None:
+                    element_new_id = uuid.uuid4().hex
+                    db.add_atom(Atom(element_new_id, element_new))
 
-                db.update_surface(Pt_id, tune_id, Pt_new_id)
-            else:
-                Pt_new_id = db.search_atom_id(Pt_new)[0]
-                db.update_surface(Pt_id, tune_id, Pt_new_id)
+                    db.update_surface(element_id, tune_id, element_new_id)
+                else:
+                    Pt_new_id = db.search_atom_id(element_new)[0]
+                    db.update_surface(element_id, tune_id, Pt_new_id)
 
-            bar()
+                bar()
