@@ -1,23 +1,50 @@
 # region Imports
-# region chgnet imports
-from chgnet.model import CHGNet
-from chgnet.utils import parse_vasp_dir, read_json
-from chgnet.data.dataset import StructureData, get_train_val_test_loader
-from chgnet.trainer import Trainer
-# endregion
+import random
+import os
+import datetime
+try:
+    from .util import logger
+except ImportError:
+    from util import logger
 
-import numpy as np
-from pymatgen.core import Structure
+try:
+    from pymatgen.core import Structure
+except ImportError:
+    logger.error("chgnet", "pymatgen module not found")
+    logger.info("chgnet", "installing pymatgen")
+    os.system("pip install pymatgen")
+
 from pathlib import Path
 import glob # noqa
 try:
     from database import db
 except ImportError:
     from .database import db # noqa
-import random
-import os
-import datetime
 
+try:
+    import numpy as np
+except ImportError:
+    logger.error("chgnet", "numpy module not found")
+    logger.info("chgnet", "installing numpy")
+    os.system("pip install numpy")
+    import numpy as np
+
+# region chgnet imports
+try:
+    from chgnet.model import CHGNet
+    from chgnet.utils import parse_vasp_dir, read_json
+    from chgnet.data.dataset import StructureData, get_train_val_test_loader
+    from chgnet.trainer import Trainer
+except ImportError:
+    logger.error("chgnet", "CHGNET module not found")
+    logger.info("chgnet", "installing CHGNET")
+    os.system("pip install chgnet")
+    from chgnet.model import CHGNet
+    from chgnet.utils import parse_vasp_dir, read_json
+    from chgnet.data.dataset import StructureData, get_train_val_test_loader
+    from chgnet.trainer import Trainer
+
+# endregion
 # endregion
 
 
