@@ -1,12 +1,27 @@
 try:
     from .database import db
     from .database.data_classes import Atom
+    from .util import logger
 except ImportError:
     from database import db
     from database.data_classes import Atom
-import numpy as np
+    from util import logger
+import os
+try:
+    import numpy as np
+except ImportError:
+    logger.error("surface", "numpy module not found")
+    logger.info("surface", "installing numpy")
+    os.system("pip install numpy")
+    import numpy as np
 import uuid
-import alive_progress
+try:
+    import alive_progress
+except ImportError:
+    logger.error("surface", "alive_progress module not found")
+    logger.info("surface", "installing alive_progress")
+    os.system("pip install alive_progress")
+    import alive_progress
 
 
 LATTICE = {
