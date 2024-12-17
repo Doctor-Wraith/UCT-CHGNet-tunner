@@ -52,5 +52,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except Exception:
+    except Exception as e:
         logger.error("main", "CRASHING")
+        logger.error("main", e)
