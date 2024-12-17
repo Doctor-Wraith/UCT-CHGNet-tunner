@@ -1,5 +1,6 @@
 # How to install
-This program requires python version 3.12.4 or higher
+This program requires python version 3.11 or higher
+
 First run
 ```
 sudo apt-get install python3-dev
