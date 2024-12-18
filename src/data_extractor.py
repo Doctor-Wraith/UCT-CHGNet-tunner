@@ -281,7 +281,7 @@ def save_to_data_base(data: Data):
         adsorbate_3,
         data.energy,
         data.folder,
-        random.choices([True, False], [80, 20])[0]
+        random.choices([True, False], util.configuration["ratio"])[0]
     )
 
     if (surface is not None) and (

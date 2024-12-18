@@ -4,7 +4,9 @@ from . import distance
 from .logger import logger
 from .inputs import get_input
 from .visuals import graph
+from .config import configuration
 
 __all__ = ["Force", "Position", "get_files",
            "find_file_like", "scandir", "distance",
-           "Atom", "logger", "get_input", "graph"]
+           "Atom", "logger", "get_input", "graph",
+           "configuration"]

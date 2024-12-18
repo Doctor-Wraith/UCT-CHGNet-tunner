@@ -3,9 +3,9 @@ import random
 import os
 import datetime
 try:
-    from .util import logger
+    from .util import logger, configuration
 except ImportError:
-    from util import logger
+    from util import logger, configuration
 
 try:
     from pymatgen.core import Structure
@@ -145,8 +145,8 @@ class CHGNET:
             optimizer="Adam",
             scheduler="CosLR",
             criterion="MSE",
-            epochs=50,
-            learning_rate=5e-4,
+            epochs=configuration["chgnet"]["epoch"],
+            learning_rate=float(configuration["chgnet"]["learn"]),
             use_device="cpu",
             print_freq=100,
         )
