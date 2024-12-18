@@ -1,6 +1,8 @@
 # region Imports
 from dataclasses import dataclass
 import os
+from io import TextIOWrapper
+import statistics
 
 try:
     from .logger import logger
@@ -92,10 +94,13 @@ class Graph:
 
         # Line of best fit
         a, b = np.polyfit(x, y, 1)
-        print()
-        print(a)
-        print(b)
         plt.plot(x, a*x+b)
+
+        dist = [abs(i-j) for i, j in zip(x, y)]
+        p = "./output/stats/"
+        Path(p).mkdir(parents=True, exist_ok=True)
+        with open(f"{p}{self.name}.txt", "w") as output:
+            self.save_to_file(output, dist)
 
         if labeled:
             for i, txt in enumerate(names):
@@ -108,6 +113,7 @@ class Graph:
                     "-", "_"
                 )
         Path(save).mkdir(parents=True, exist_ok=True)
+
         save += f"{self.name}.svg"
         plt.plot(
             np.array([minimum, maximum]),
@@ -118,7 +124,20 @@ class Graph:
         plt.savefig(
             (save)
             )
-        plt.show()
+        # plt.show()
+        plt.clf()
+
+    def save_to_file(self, file: TextIOWrapper, dist: list):
+        file.write(self.name + "\n")
+        file.write("Distances from DFT:\n")
+        for d in dist:
+            file.write(f"\t{d}\n")
+        file.write("\n")
+        file.write("Summary:\n")
+        file.write(f"\tMean:\t{sum(dist)/len(dist)}\n")
+        file.write(f"\tMedian:\t{statistics.median(dist)}\n")
+        file.write(f"\tMax dist:\t{max(dist)}\n")
+        file.write(f"\tMin dist:\t{min(dist)}\n")
 
 
 graph = Graph()

@@ -144,27 +144,30 @@ class ResponseHandler:
 
         models = glob.glob("./output/models/*")
         print(models)
-        for model in models:
-            testing_model.load_model(model.replace("\\", "/"))
-            util.graph.set_model_name(model.replace("\\", "/").split("/")[-1])
-            for test in testing_files:
-                try:
-                    name = test.replace("\\", "/").split("/")[-1].replace(
-                        ".json", ""
-                        )
-                    i += 1
-                    print(f"\n\n{test}\n\n")
-                    testing_model.load_structures(test)
-                    e = testing_model.predict()
-                    e_actual = db.get_energy(name)[0]
-                    util.graph.add_data_point(
-                        name, e_actual, e * db.get_atom_count(name)
-                        )
-                except Exception:
-                    pass
+        with alive_progress.alive_bar(len(models) * len(testing_files)) as bar:
+            for model in models:
+                testing_model.load_model(model.replace("\\", "/"))
+                util.graph.set_model_name(model.replace("\\", "/").split("/")[-1]) # noqa
+                for test in testing_files:
+                    try:
+                        name = test.replace("\\", "/").split("/")[-1].replace(
+                            ".json", ""
+                            )
+                        i += 1
+                        print(f"\n\n{test}\n\n")
+                        testing_model.load_structures(test)
+                        e = testing_model.predict()
+                        e_actual = db.get_energy(name)[0]
+                        util.graph.add_data_point(
+                            name, e_actual, e * db.get_atom_count(name)
+                            )
+                    except Exception:
+                        bar()
+                    else:
+                        bar()
 
-            util.graph.show(max=-50)
-            util.graph.reset()
+                util.graph.show(max=-50)
+                util.graph.reset()
         del testing_model
 
     def train(self):
