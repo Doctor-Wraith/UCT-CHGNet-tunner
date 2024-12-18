@@ -18,4 +18,4 @@ if os.path.isfile(path):
 else:
     with open(path, "w") as file:
         configuration = json.loads(str(DEFUALT).replace("'", '"'))
-        json.dump(configuration, file)
+        json.dump(configuration, file, indent=4)
