@@ -8,7 +8,7 @@ sudo apt-get install python3-dev
 
 To install either run
 ```
-git clone https://github.com/Doctor-Wraith/UCT.git
+git clone https://github.com/Doctor-Wraith/UCT-CHGNet-tunner.git
 ```
 or download as a zip under Code
 
