@@ -17,7 +17,8 @@ class Help:
             "reset": self.reset,
             "check": self.check,
             "vasp": self.vasp,
-            "random": self.random
+            "random": self.random,
+            "help": self.help
         }
 
     def get_help(self, cmd: str):
@@ -36,6 +37,11 @@ class Help:
         cmd.sort()
         out = "Available commands:\n\t- " + "\n\t- ".join(cmd)
         print(out)
+
+    def help(self):
+        out = "lists the functions or if given a command give a \
+quick description of what it does"
+        return out
 
     def load(self):
         out = "The load function is used to load OUTCAR files into memory\n\n\

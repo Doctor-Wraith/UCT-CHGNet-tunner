@@ -24,7 +24,4 @@ Depending on operating system:
     ```
 
 # Running
-## The detection of surfaces
-The program will detect The following elements as surfaces:
-- Pt
-- Fe
+Make use of the inbuilt help function
