@@ -1,6 +1,7 @@
 from pathlib import Path
 from src.util import logger
 from src import util
+from src.help import help
 import os
 
 
@@ -43,8 +44,14 @@ def main():
         command = util.get_input("Enter command> ").lower().strip()
 
         if command in ["q", "quit", "close", 'stop']:
-            logger.info("Program", "Stopping")
+            logger.info("main", "Stopping")
             running = False
+        elif "help" in command:
+            cmd = command.split()
+            try:
+                help.get_help(cmd[1])
+            except IndexError:
+                help.list_commands()
         else:
             handler.handler(command)
 

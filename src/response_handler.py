@@ -20,7 +20,7 @@ class ResponseHandler:
     SAVE_LOCAL = ["save", '--s']
     TRAIN = ["train", '--t']
     UNLOAD = ["clear"]
-    DB_RESET = ["--dbr"]
+    DB_RESET = ["reset", "--dbr"]
     CHECK = ["check"]
     VASP = ["vasp", "--v"]
     RANDO = ["random", '--r']

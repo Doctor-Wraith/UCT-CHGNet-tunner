@@ -2,9 +2,11 @@ import sqlite3
 try:
     from . import sqlstatements
     from . import data_classes
+    from ..util import configuration
 except ImportError:
     import sqlstatements
     import data_classes
+    from util import configuration # noqa
 from pathlib import Path
 import random
 
@@ -173,7 +175,8 @@ class SqliteDataBase:
 
     # endregion
     # region Update
-    def randomize_tunning(self, prob_train: int = 80, prob_test: int = 20):
+    def randomize_tunning(self, prob_train: int = configuration["ratio"][0],
+                          prob_test: int = configuration["ratio"][1]):
         cursor = self.connection.cursor()
         cursor.execute(sqlstatements.RANDOMIZE_TRAINING.get("Get_rows"))
         rows = cursor.fetchall()

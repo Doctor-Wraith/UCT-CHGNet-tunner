@@ -102,7 +102,7 @@ class Graph:
         with open(f"{p}{self.name}.txt", "w") as output:
             self.save_to_file(output, dist)
 
-        if labeled:
+        if True:
             for i, txt in enumerate(names):
                 ax.annotate(txt, (x[i], y[i]))
 
