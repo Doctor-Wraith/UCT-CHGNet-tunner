@@ -5,9 +5,6 @@ except ImportError:
 
 
 class Help:
-    COMMANDS = ["load", "save", "train", "clear", "reset",
-                "check", "vasp", "random"]
-
     def __init__(self):
         self.COMMANDS = {
             "load": self.load,

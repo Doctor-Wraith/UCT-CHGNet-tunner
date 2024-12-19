@@ -11,6 +11,7 @@ import random
 import os
 import shutil
 from pathlib import Path
+from typing import Optional
 # endregion
 
 
@@ -33,7 +34,7 @@ class Data:
                 self.energy = list_line[5]
                 break
 
-    def check_surface(self, atom_name: str) -> tuple[bool, str | None]:
+    def check_surface(self, atom_name: str) -> tuple[bool, Optional[str]]:
         if atom_name in VALID_SURFACES:
             return (True, atom_name)
 
@@ -207,7 +208,7 @@ class Data:
 
 # region Database
 def get_adsorbates(atoms: dict[str, data_classes.Atom]) -> list[
-        data_classes.Atom | None]:
+        Optional[data_classes.Atom]]:
     atoms = list(atoms.values())
     try:
         adsorbate_1 = atoms[0]

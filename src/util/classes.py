@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 class Vector2D:
@@ -83,5 +84,5 @@ class Atom:
     name: str
     count: int
     surface: bool
-    locations: list[Position] | None
-    forces: list[Force] | None
+    locations: Optional[list[Position]]
+    forces: Optional[list[Force]]
